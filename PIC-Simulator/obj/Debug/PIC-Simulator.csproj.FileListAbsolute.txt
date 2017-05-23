@@ -71,3 +71,9 @@ D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\
 D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC_Simulator.Help.resources
 D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC_Simulator.Properties.Resources.resources
 D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.csproj.GenerateResource.Cache
+D:\Workspace\PICSimulator\PIC-Simulator\bin\Debug\PIC-Simulator.exe.config
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\Interop.AcroPDFLib.dll
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\AxInterop.AcroPDFLib.dll
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.csproj.ResolveComReference.cache
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.exe
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.pdb

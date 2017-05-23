@@ -2667,22 +2667,22 @@ namespace PIC_Simulator
                     resultstring = "9";
                     break;
                 case "1010":
-                    resultstring = "A";
+                    resultstring = "a";
                     break;
                 case "1011":
-                    resultstring = "B";
+                    resultstring = "b";
                     break;
                 case "1100":
-                    resultstring = "C";
+                    resultstring = "c";
                     break;
                 case "1101":
-                    resultstring = "D";
+                    resultstring = "d";
                     break;
                 case "1110":
-                    resultstring = "E";
+                    resultstring = "e";
                     break;
                 case "1111":
-                    resultstring = "F";
+                    resultstring = "f";
                     break;
                 default:
                     break;
@@ -2720,22 +2720,22 @@ namespace PIC_Simulator
                     resultstring = "9" + resultstring;
                     break;
                 case "1010":
-                    resultstring = "A" + resultstring;
+                    resultstring = "a" + resultstring;
                     break;
                 case "1011":
-                    resultstring = "B" + resultstring;
+                    resultstring = "b" + resultstring;
                     break;
                 case "1100":
-                    resultstring = "C" + resultstring;
+                    resultstring = "c" + resultstring;
                     break;
                 case "1101":
-                    resultstring = "D" + resultstring;
+                    resultstring = "d" + resultstring;
                     break;
                 case "1110":
-                    resultstring = "E" + resultstring;
+                    resultstring = "e" + resultstring;
                     break;
                 case "1111":
-                    resultstring = "F" + resultstring;
+                    resultstring = "f" + resultstring;
                     break;
                 default:
                     break;
