@@ -138,6 +138,8 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.timer5 = new System.Windows.Forms.Timer(this.components);
             this.portsettimer = new System.Windows.Forms.Timer(this.components);
+            this.textBox_Prescaler = new System.Windows.Forms.TextBox();
+            this.txt_Prescaler = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.opcodedata)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bank0)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -1128,6 +1130,8 @@
             // groupBox7
             // 
             this.groupBox7.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox7.Controls.Add(this.txt_Prescaler);
+            this.groupBox7.Controls.Add(this.textBox_Prescaler);
             this.groupBox7.Controls.Add(this.label26);
             this.groupBox7.Controls.Add(this.txt_pc);
             this.groupBox7.Controls.Add(this.label25);
@@ -1172,10 +1176,11 @@
             // 
             // txt_stack
             // 
-            this.txt_stack.Location = new System.Drawing.Point(428, 40);
+            this.txt_stack.Location = new System.Drawing.Point(428, 41);
             this.txt_stack.Name = "txt_stack";
             this.txt_stack.Size = new System.Drawing.Size(100, 20);
             this.txt_stack.TabIndex = 7;
+            this.txt_stack.TextChanged += new System.EventHandler(this.txt_stack_TextChanged);
             // 
             // btn_conndisconn
             // 
@@ -1248,6 +1253,23 @@
             // timer4
             // 
             this.timer4.Tick += new System.EventHandler(this.timer4_Tick);
+            // 
+            // textBox_Prescaler
+            // 
+            this.textBox_Prescaler.Location = new System.Drawing.Point(205, 41);
+            this.textBox_Prescaler.Name = "textBox_Prescaler";
+            this.textBox_Prescaler.Size = new System.Drawing.Size(100, 20);
+            this.textBox_Prescaler.TabIndex = 11;
+            // 
+            // txt_Prescaler
+            // 
+            this.txt_Prescaler.AutoSize = true;
+            this.txt_Prescaler.Location = new System.Drawing.Point(202, 22);
+            this.txt_Prescaler.Name = "txt_Prescaler";
+            this.txt_Prescaler.Size = new System.Drawing.Size(51, 13);
+            this.txt_Prescaler.TabIndex = 12;
+            this.txt_Prescaler.Text = "Prescaler";
+            this.txt_Prescaler.Click += new System.EventHandler(this.label27_Click);
             // 
             // Form1
             // 
@@ -1396,6 +1418,8 @@
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.TextBox txt_pc;
         private System.Windows.Forms.Timer portsettimer;
+        private System.Windows.Forms.TextBox textBox_Prescaler;
+        private System.Windows.Forms.Label txt_Prescaler;
     }
 }
 

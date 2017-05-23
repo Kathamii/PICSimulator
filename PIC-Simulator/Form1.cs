@@ -245,7 +245,7 @@ namespace PIC_Simulator
                 int row = opcodedata.CurrentRow.Index;
                 int retvalue = dooperator(opcode, opstring, row);
                 //Zeitdurchlauf für einen Befehl
-                await Task.Delay(60);
+                await Task.Delay(5);
 
 
                 if (retvalue != 1234567)
@@ -1602,6 +1602,7 @@ namespace PIC_Simulator
                     break;
 
                 default:
+                    TimerWertbefehl--;
                     break;
             }
 
@@ -1691,7 +1692,8 @@ namespace PIC_Simulator
                     {
                         case "000":
                             //1:1
-                            if (TimerWertbefehl > 255)
+                            textBox_Prescaler.Text = "1:1 (Watchdog)";
+                            if (TimerWertbefehl > 255 && TimerWertbefehl != 0)
                             {
 
                                 TimerWertbefehl = TimerWertbefehl - 256;
@@ -1704,8 +1706,8 @@ namespace PIC_Simulator
 
                         case "001":
                             //1:2
-                        
-                            if (TimerWertbefehl % 2 == 0)
+                            textBox_Prescaler.Text = "1:2 (Watchdog)";
+                            if (TimerWertbefehl % 2 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1719,7 +1721,8 @@ namespace PIC_Simulator
 
                         case "010":
                             //1:4
-                            if (TimerWertbefehl % 4 == 0)
+                            textBox_Prescaler.Text = "1:4 (Watchdog)";
+                            if (TimerWertbefehl % 4 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1733,7 +1736,8 @@ namespace PIC_Simulator
 
                         case "011":
                             //1:8
-                            if (TimerWertbefehl % 8 == 0)
+                            textBox_Prescaler.Text = "1:8 (Watchdog)";
+                            if (TimerWertbefehl % 8 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1747,7 +1751,8 @@ namespace PIC_Simulator
 
                         case "100":
                             //1:16
-                            if (TimerWertbefehl % 16 == 0)
+                            textBox_Prescaler.Text = "1:16 (Watchdog)";
+                            if (TimerWertbefehl % 16 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1761,7 +1766,8 @@ namespace PIC_Simulator
 
                         case "101":
                             //1:32
-                            if (TimerWertbefehl % 32 == 0)
+                            textBox_Prescaler.Text = "1:32 (Watchdog)";
+                            if (TimerWertbefehl % 32 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1775,7 +1781,8 @@ namespace PIC_Simulator
 
                         case "110":
                             //1:64
-                            if (TimerWertbefehl % 64 == 0)
+                            textBox_Prescaler.Text = "1:64 (Watchdog)";
+                            if (TimerWertbefehl % 64 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1789,7 +1796,8 @@ namespace PIC_Simulator
 
                         case "111":
                             //1:128
-                            if (TimerWertbefehl % 128 == 0)
+                            textBox_Prescaler.Text = "1:128 (Watchdog)";
+                            if (TimerWertbefehl % 128 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1808,7 +1816,8 @@ namespace PIC_Simulator
                     {
                         case "000":
                             //1:2
-                            if (TimerWertbefehl % 2 == 0)
+                            textBox_Prescaler.Text = "1:2 (Timer)";
+                            if (TimerWertbefehl % 2 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1822,7 +1831,8 @@ namespace PIC_Simulator
 
                         case "001":
                             //1:4
-                            if (TimerWertbefehl % 4 == 0)
+                            textBox_Prescaler.Text = "1:4 (Timer)";
+                            if (TimerWertbefehl % 4 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1836,7 +1846,8 @@ namespace PIC_Simulator
 
                         case "010":
                             //1:8
-                            if (TimerWertbefehl % 8 == 0)
+                            textBox_Prescaler.Text = "1:8 (Timer)";
+                            if (TimerWertbefehl % 8 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1850,7 +1861,8 @@ namespace PIC_Simulator
 
                         case "011":
                             //1:16
-                            if (TimerWertbefehl % 16 == 0)
+                            textBox_Prescaler.Text = "1:16 (Timer)";
+                            if (TimerWertbefehl % 16 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1864,7 +1876,8 @@ namespace PIC_Simulator
 
                         case "100":
                             //1:32
-                            if (TimerWertbefehl % 32 == 0)
+                            textBox_Prescaler.Text = "1:32 (Timer)";
+                            if (TimerWertbefehl % 32 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1878,7 +1891,8 @@ namespace PIC_Simulator
 
                         case "101":
                             //1:64
-                            if (TimerWertbefehl % 64 == 0)
+                            textBox_Prescaler.Text = "1:64 (Timer)";
+                            if (TimerWertbefehl % 64 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1892,7 +1906,8 @@ namespace PIC_Simulator
 
                         case "110":
                             //1:128
-                            if (TimerWertbefehl % 128 == 0)
+                            textBox_Prescaler.Text = "1:128 (Timer)";
+                            if (TimerWertbefehl % 128 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -1906,7 +1921,8 @@ namespace PIC_Simulator
 
                         case "111":
                             //1:256
-                            if (TimerWertbefehl % 256 == 0)
+                            textBox_Prescaler.Text = "1:256 (Timer)";
+                            if (TimerWertbefehl % 256 == 0 && TimerWertbefehl != 0)
                             {
                                 Ausgabewert = Ausgabewert + 1;
                                 if (Ausgabewert > 255)
@@ -2422,12 +2438,14 @@ namespace PIC_Simulator
                 if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 7) + "1") port4_0.BackColor = Color.Firebrick ;
                 if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 7) + "0") port4_0.BackColor = Color.Transparent;
             }
-            
+            try
+            {
                 if (speicherzellen[1, j].Value.ToString() == bank0[1, 7].Value.ToString())
                 {
                     speicherzellen[2, j].Value = bank0[2, 7].Value.ToString();
                 }
-            
+            }
+            catch { }
 
         }
 
@@ -3587,6 +3605,14 @@ namespace PIC_Simulator
             }
         }
 
-        
+        private void label27_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txt_stack_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
