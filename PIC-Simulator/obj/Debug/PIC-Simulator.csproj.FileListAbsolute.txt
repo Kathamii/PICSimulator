@@ -55,3 +55,19 @@ C:\Users\z003jy6p.AD001\Desktop\PIC-Simulator_re (991)\PIC-Simulator_re\PIC-Simu
 C:\Users\z003jy6p.AD001\Desktop\PIC-Simulator_re (991)\PIC-Simulator_re\PIC-Simulator\PIC-Simulator\obj\Debug\PIC_Simulator.Help.resources
 C:\Users\z003jy6p.AD001\Desktop\PIC-Simulator_re (991)\PIC-Simulator_re\PIC-Simulator\PIC-Simulator\obj\Debug\PIC_Simulator.Properties.Resources.resources
 C:\Users\z003jy6p.AD001\Desktop\PIC-Simulator_re (991)\PIC-Simulator_re\PIC-Simulator\PIC-Simulator\obj\Debug\PIC-Simulator.csproj.GenerateResource.Cache
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\bin\Debug\PIC-Simulator.exe.config
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\Interop.AcroPDFLib.dll
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\AxInterop.AcroPDFLib.dll
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.csproj.ResolveComReference.cache
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.exe
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.pdb
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\bin\Debug\PIC-Simulator.exe
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\bin\Debug\PIC-Simulator.pdb
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\bin\Debug\Interop.AcroPDFLib.dll
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\bin\Debug\AxInterop.AcroPDFLib.dll
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.csprojResolveAssemblyReference.cache
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC_Simulator.Form1.resources
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC_Simulator.Form2.resources
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC_Simulator.Help.resources
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC_Simulator.Properties.Resources.resources
+D:\syncplicity\z003jy6p\Documents\localpic\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.csproj.GenerateResource.Cache

@@ -30,11 +30,11 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
+            this.connect_btn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.disconnect_btn = new System.Windows.Forms.Button();
+            this.combox_bausrate = new System.Windows.Forms.ComboBox();
+            this.combobox_port = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
@@ -44,11 +44,11 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.button2);
+            this.groupBox1.Controls.Add(this.connect_btn);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.comboBox2);
-            this.groupBox1.Controls.Add(this.comboBox1);
+            this.groupBox1.Controls.Add(this.disconnect_btn);
+            this.groupBox1.Controls.Add(this.combox_bausrate);
+            this.groupBox1.Controls.Add(this.combobox_port);
             this.groupBox1.Location = new System.Drawing.Point(12, 0);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(260, 92);
@@ -64,15 +64,15 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Baudrate";
             // 
-            // button2
+            // connect_btn
             // 
-            this.button2.Location = new System.Drawing.Point(9, 62);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(119, 23);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Connect";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.connect_btn.Location = new System.Drawing.Point(9, 62);
+            this.connect_btn.Name = "connect_btn";
+            this.connect_btn.Size = new System.Drawing.Size(119, 23);
+            this.connect_btn.TabIndex = 5;
+            this.connect_btn.Text = "Connect";
+            this.connect_btn.UseVisualStyleBackColor = true;
+            this.connect_btn.Click += new System.EventHandler(this.button2_Click);
             // 
             // label1
             // 
@@ -83,35 +83,35 @@
             this.label1.TabIndex = 3;
             this.label1.Text = "Port:";
             // 
-            // button1
+            // disconnect_btn
             // 
-            this.button1.Location = new System.Drawing.Point(134, 62);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(120, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Disconnect";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.disconnect_btn.Location = new System.Drawing.Point(134, 62);
+            this.disconnect_btn.Name = "disconnect_btn";
+            this.disconnect_btn.Size = new System.Drawing.Size(120, 23);
+            this.disconnect_btn.TabIndex = 0;
+            this.disconnect_btn.Text = "Disconnect";
+            this.disconnect_btn.UseVisualStyleBackColor = true;
+            this.disconnect_btn.Click += new System.EventHandler(this.button1_Click);
             // 
-            // comboBox2
+            // combox_bausrate
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.combox_bausrate.FormattingEnabled = true;
+            this.combox_bausrate.Items.AddRange(new object[] {
             "4800",
             "9600",
             "115200"});
-            this.comboBox2.Location = new System.Drawing.Point(134, 35);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 21);
-            this.comboBox2.TabIndex = 2;
+            this.combox_bausrate.Location = new System.Drawing.Point(134, 35);
+            this.combox_bausrate.Name = "combox_bausrate";
+            this.combox_bausrate.Size = new System.Drawing.Size(121, 21);
+            this.combox_bausrate.TabIndex = 2;
             // 
-            // comboBox1
+            // combobox_port
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(7, 35);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
-            this.comboBox1.TabIndex = 1;
+            this.combobox_port.FormattingEnabled = true;
+            this.combobox_port.Location = new System.Drawing.Point(7, 35);
+            this.combobox_port.Name = "combobox_port";
+            this.combobox_port.Size = new System.Drawing.Size(121, 21);
+            this.combobox_port.TabIndex = 1;
             // 
             // groupBox2
             // 
@@ -154,10 +154,10 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ComboBox combox_bausrate;
+        private System.Windows.Forms.ComboBox combobox_port;
+        private System.Windows.Forms.Button disconnect_btn;
+        private System.Windows.Forms.Button connect_btn;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label3;
     }

@@ -22,12 +22,14 @@ namespace PIC_Simulator
             getserialports();
         }
 
+        //get all available serial ports
         private void getserialports()
         {
             String[] ports = SerialPort.GetPortNames();
-            comboBox1.Items.AddRange(ports);
+            combobox_port.Items.AddRange(ports);
         }
 
+        //disconnect serial port
         private void button1_Click(object sender, EventArgs e)
         {
             serialPort1.Close();
@@ -35,20 +37,21 @@ namespace PIC_Simulator
             
         }
        
+        //connect serial port
         public void button2_Click(object sender, EventArgs e)
         {
             
             try
             {
 
-                if (comboBox1.Text == "" || comboBox2.Text == "")
+                if (combobox_port.Text == "" || combox_bausrate.Text == "")
                 {
                     MessageBox.Show("Please select port settings");
                 }
                 else
                 {
-                    serialPort1.PortName = comboBox1.Text;
-                    serialPort1.BaudRate = Convert.ToInt32(comboBox2.Text);
+                    serialPort1.PortName = combobox_port.Text;
+                    serialPort1.BaudRate = Convert.ToInt32(combox_bausrate.Text);
                     serialPort1.DataBits = 8;
                     serialPort1.Parity = Parity.None;
                     serialPort1.StopBits = StopBits.One;
@@ -62,6 +65,8 @@ namespace PIC_Simulator
                 label3.Text = "Connection Failed";
             }
         }
+
+        //set status
         public string status()
         {
             return label3.Text.ToString();

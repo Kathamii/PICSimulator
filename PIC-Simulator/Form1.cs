@@ -22,7 +22,6 @@ namespace PIC_Simulator
         double runtime;
         double quarzfrequenz = 4000;
         int befehlnr = 0;
-
         int carry = 2;
         int zero = 2;
         int digitcarry = 2;
@@ -32,10 +31,8 @@ namespace PIC_Simulator
         int TimerWert;
         int TimerWertbefehl = 0;
         int Ausgabewert;
-
         int takta = 300;
         int taktb = 300;
-
         Color colorset;
         Form2 conn;
 
@@ -43,19 +40,14 @@ namespace PIC_Simulator
 
         public Form1()
         {
-
             InitializeComponent();
-            
-
-            timer4.Interval = 200;
-         
-            
-
-            
+            timer4.Interval = 300;
         }
 
+        //neues lst-File auswählen
         private void button1_Click(object sender, EventArgs e)
         {
+            
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Unterstützte Dateien (*.lst)|*.lst";
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -64,8 +56,11 @@ namespace PIC_Simulator
             }
         }
 
+        //auslesen des LST-Files und setzen der Register (Standartwerte)
         private void readbtn_Click(object sender, EventArgs e)
         {
+            
+
             string path = textbox_path.Text;
             string line;
             int start = 0;
@@ -73,65 +68,51 @@ namespace PIC_Simulator
                 System.IO.StreamReader file =
                     new System.IO.StreamReader(path);
 
+                //Register mit Standartwerten belegen
+                bank0.Rows.Add("w", "", "");
+                bank0.Rows.Add("INDF", "00h", "--------");
+                bank0.Rows.Add("TMR0", "01h", "xxxxxxxx");
+                bank0.Rows.Add("PCL", "02h", "00000000");
+                bank0.Rows.Add("STATUS", "03h", "00011xxx");
+                bank0.Rows.Add("FSR", "04h", "xxxxxxxx");
+                bank0.Rows.Add("PORTA", "05h", "---xxxxx");
+                bank0.Rows.Add("PORTB", "06h", "xxxxxxxx");
+                bank0.Rows.Add("EEDATA", "08h", "xxxxxxxx");
+                bank0.Rows.Add("EEADR", "09h", "xxxxxxxx");
+                bank0.Rows.Add("PCLATH", "0Ah", "---00000");
+                bank0.Rows.Add("INTCON", "0Bh", "0000000x");
 
-                dataGridView2.Rows.Add("w", "", "");
-                dataGridView2.Rows.Add("INDF", "00h", "--------");
-                dataGridView2.Rows.Add("TMR0", "01h", "xxxxxxxx");
-                dataGridView2.Rows.Add("PCL", "02h", "00000000");
-                dataGridView2.Rows.Add("STATUS", "03h", "00011xxx");
-                dataGridView2.Rows.Add("FSR", "04h", "xxxxxxxx");
-                dataGridView2.Rows.Add("PORTA", "05h", "---xxxxx");
-                dataGridView2.Rows.Add("PORTB", "06h", "xxxxxxxx");
-                dataGridView2.Rows.Add("EEDATA", "08h", "xxxxxxxx");
-                dataGridView2.Rows.Add("EEADR", "09h", "xxxxxxxx");
-                dataGridView2.Rows.Add("PCLATH", "0Ah", "---00000");
-                dataGridView2.Rows.Add("INTCON", "0Bh", "0000000x");
-
-                dataGridView3.Rows.Add("w", "", "");
-                dataGridView3.Rows.Add("INDF", "80h", "--------");
-                dataGridView3.Rows.Add("OPTION_REG", "81h", "11111000");
-                dataGridView3.Rows.Add("PCL", "82h", "00000000");
-                dataGridView3.Rows.Add("STATUS", "83h", "00011xxx");
-                dataGridView3.Rows.Add("FSR", "84h", "xxxxxxxx");
-                dataGridView3.Rows.Add("TRISA", "85h", "---11111");
-                dataGridView3.Rows.Add("TRISB", "86h", "11111111");
-                dataGridView3.Rows.Add("EECON1", "88h", "---0x000");
-                dataGridView3.Rows.Add("EECON2", "89h", "--------");
-                dataGridView3.Rows.Add("PCLATH", "0Ah", "---00000");
-                dataGridView3.Rows.Add("INTCON", "0Bh", "0000000x");
+                bank1.Rows.Add("w", "", "");
+                bank1.Rows.Add("INDF", "80h", "--------");
+                bank1.Rows.Add("OPTION_REG", "81h", "11111111");
+                bank1.Rows.Add("PCL", "82h", "00000000");
+                bank1.Rows.Add("STATUS", "83h", "00011xxx");
+                bank1.Rows.Add("FSR", "84h", "xxxxxxxx");
+                bank1.Rows.Add("TRISA", "85h", "---11111");
+                bank1.Rows.Add("TRISB", "86h", "11111111");
+                bank1.Rows.Add("EECON1", "88h", "---0x000");
+                bank1.Rows.Add("EECON2", "89h", "--------");
+                bank1.Rows.Add("PCLATH", "0Ah", "---00000");
+                bank1.Rows.Add("INTCON", "0Bh", "0000000x");
                 int button;
 
-                for (int i = 0; i < 8; i++)
-                {
-                    if (dataGridView3[2, 6].Value.ToString().Substring(i, 1) == "1")
-                    {
-                        button = i + 1;
-                        inputoutput(button, true);
-                    }
-                    if (dataGridView3[2, 6].Value.ToString().Substring(i, 1) == "0")
-                    {
-                        button = i + 1;
-                        inputoutput(button, false);
-                    }
-                    if (dataGridView3[2, 7].Value.ToString().Substring(i, 1) == "1")
-                    {
-                        button = i + 9;
-                        inputoutput(button, true);
-                    }
-                    if (dataGridView3[2, 7].Value.ToString().Substring(i, 1) == "0")
-                    {
-                        button = i + 9;
-                        inputoutput(button, false);
-                    }
-                }
+                //timer für input/output setzen
+                timerinputporta.Interval = takta;
+                timerinputportb.Interval = taktb;
+                timerinputportb.Start();
+                timerinputporta.Start();
+               
+
+               
                 while ((line = file.ReadLine()) != null)
                 {
-                    /////Anlegen register, data sheet s.9
+                    
                     List<String> registername = new List<String>();
                     List<String> varvalue = new List<String>();
 
                     if (start == 0)
                     {
+                        //auslesen der weite für Variablen
                         Regex equ = new Regex("equ");
                         if (equ.Match(line).Success)
                         {
@@ -148,13 +129,17 @@ namespace PIC_Simulator
                             varvalue.Add(value);
                         }
                     }
+
+                    //Speicherzellen ins datagridview schreiben
                     for (int i = 0; registername.Count > i; i++)
                     {
-                        dataGridView4.Rows.Add(registername[i], varvalue[i], "");
+                        speicherzellen.Rows.Add(registername[i], varvalue[i], "");
                     }
 
+                    //Ab hier wird das eig Programm (mit befehlen) ausgelesen
                     if (start == 1)
                     {
+                        //auslesen der Loops (Loop1, Loop2, etc)
                         Regex regloop = new Regex("[0-9]{5}[ ]{2}[A-Za-z0-9]*");
                         if (regloop.Match(line).Success)
                         {
@@ -162,38 +147,44 @@ namespace PIC_Simulator
                             match = match.Remove(0, 7);
                             if (match != "")
                             {
-                                dataGridView1.Rows.Add(false, "", "", "" + match + "");
-                                dataGridView1.Rows[dataGridView1.Rows.Count - 1].DefaultCellStyle.BackColor = Color.LightGray;
+                                opcodedata.Rows.Add(false, "", "", "" + match + "");
+                                opcodedata.Rows[opcodedata.Rows.Count - 1].DefaultCellStyle.BackColor = Color.LightGray;
                             }
                         }
+                        //auslesen der operators
                         Regex regop = new Regex("[0-9A-F]{4}[ ]{1}[0-9a-fA-F]{4}[ ]{1}");
                         if (regop.Match(line).Success)
                         {
                             string match = line;
-                            string idx = match.Remove(4);
-                            string bitop = match.Remove(9).Remove(0, 4).TrimStart(' ');
-
+                            string idx = match.Remove(4); //Index
+                            string bitop = match.Remove(9).Remove(0, 4).TrimStart(' '); //opcode
                             Regex regops = new Regex("[ a-zA-Z0-9,]*");
                             string op = match.Remove(0, 36);
                             op = regops.Match(op).Value;
-                            op = op.TrimEnd(' ');
-                            dataGridView1.Rows.Add(false, idx, bitop, op);
+                            op = op.TrimEnd(' '); //opstring
+                            opcodedata.Rows.Add(false, idx, bitop, op);
                         }
                     }
+                    //start auf 1, also signal, dass befehle nun kommen
                     Regex r = new Regex("org[ ]*0");
                     if (r.Match(line).Success)
                     {
                         start = 1;
                     }
                 }
-                for (int i = 0; i < dataGridView4.RowCount; i++)
+                //gleichsetzen von speicherzellen mir den Banken
+                for (int i = 0; i < speicherzellen.RowCount; i++)
                 {
-                    string locs = dataGridView4[1, i].Value.ToString();
-                    for (int j = 0; j < dataGridView2.RowCount; j++)
+                    string locs = speicherzellen[1, i].Value.ToString();
+                    for (int j = 0; j < bank0.RowCount; j++)
                     {
-                        if (dataGridView2[1, j].Value.ToString() == locs)
+                        if (bank0[1, j].Value.ToString() == locs)
                         {
-                            dataGridView4[2, i].Value = dataGridView2[2, j].Value.ToString();
+                            speicherzellen[2, i].Value = bank0[2, j].Value.ToString();
+                        }
+                        if (bank1[1, j].Value.ToString() == locs)
+                        {
+                            speicherzellen[2, i].Value = bank1[2, j].Value.ToString();
                         }
                     }
                 }
@@ -202,11 +193,14 @@ namespace PIC_Simulator
             }
             catch
             { MessageBox.Show("Error!"); }
+
+            //befehle können nun ausgeführt werden
             startbtn.Enabled = true;
             stepbtn.Enabled = true;
             
         }
 
+        //Neues Form wird geöffnet
         private void clearbtn_Click(object sender, EventArgs e)
         {
             serialPort1.Close();
@@ -215,17 +209,24 @@ namespace PIC_Simulator
             this.Dispose(false);
         }
 
-        private async void startbtn_Click(object sender, EventArgs e)
+        //start button wird geklickt und operator im loop ausgeführt
+        private void startbtn_Click(object sender, EventArgs e)
         {
-            timer2.Interval = taktb;
-            timer1.Interval = takta;
-            timer3.Interval = 200;
-            timer3.Start();
-            timer2.Start();
-            timer1.Start();
+            opcodedata.CurrentCell = opcodedata[0, 0];
+            timer_freq.Interval = 200;
+            timer_freq.Start();
+            startbtn.Visible = false;
+            btn_weiter.Visible = true;
+            btn_weiter.Enabled = true;
+            dooperatorloop();
+            
+        }
 
-            if(dataGridView1.CurrentRow.DefaultCellStyle.BackColor != Color.Salmon) colorset = dataGridView1.CurrentRow.DefaultCellStyle.BackColor;
-            while (dataGridView1.CurrentRow.Index < dataGridView1.RowCount && dataGridView1.CurrentRow.Cells[0].Value.ToString() == "False")
+        //ausführen der befehle in der loop
+        private async void dooperatorloop()
+        {
+            if (opcodedata.CurrentRow.DefaultCellStyle.BackColor != Color.Salmon) colorset = opcodedata.CurrentRow.DefaultCellStyle.BackColor;
+            while (opcodedata.CurrentRow.Index < opcodedata.RowCount && opcodedata.CurrentRow.Cells[0].Value.ToString() == "False")
 
             {
 
@@ -237,38 +238,42 @@ namespace PIC_Simulator
 
                 //}
                 //catch { }
-                
-                dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
-                string opcode = dataGridView1.CurrentRow.Cells[2].Value.ToString();
-                string opstring = dataGridView1.CurrentRow.Cells[3].Value.ToString();
-                int row = dataGridView1.CurrentRow.Index;
+
+                opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
+                string opcode = opcodedata.CurrentRow.Cells[2].Value.ToString();
+                string opstring = opcodedata.CurrentRow.Cells[3].Value.ToString();
+                int row = opcodedata.CurrentRow.Index;
                 int retvalue = dooperator(opcode, opstring, row);
                 //Zeitdurchlauf für einen Befehl
-                await Task.Delay(20);
+                await Task.Delay(60);
 
 
                 if (retvalue != 1234567)
                 {
-                    dataGridView1.Rows[dataGridView1.CurrentRow.Index].DefaultCellStyle.BackColor = colorset;
-                    dataGridView1.CurrentCell = dataGridView1[1, retvalue];
-                    colorset = dataGridView1.CurrentRow.DefaultCellStyle.BackColor;
-                    dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
+                    opcodedata.Rows[opcodedata.CurrentRow.Index].DefaultCellStyle.BackColor = colorset;
+                    opcodedata.CurrentCell = opcodedata[1, retvalue];
+                    colorset = opcodedata.CurrentRow.DefaultCellStyle.BackColor;
+                    opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
                 }
                 else
                 {
-                    dataGridView1.Rows[dataGridView1.CurrentRow.Index].DefaultCellStyle.BackColor = colorset;
-                    dataGridView1.CurrentCell = dataGridView1[1, dataGridView1.CurrentRow.Index + 1];
-                    colorset = dataGridView1.CurrentRow.DefaultCellStyle.BackColor;
-                    dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
+                    opcodedata.Rows[opcodedata.CurrentRow.Index].DefaultCellStyle.BackColor = colorset;
+                    opcodedata.CurrentCell = opcodedata[1, opcodedata.CurrentRow.Index + 1];
+                    colorset = opcodedata.CurrentRow.DefaultCellStyle.BackColor;
+                    opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
                 }
 
 
             }
-            if (dataGridView1.CurrentRow.Cells[0].Value.ToString() == "True") dataGridView1.CurrentRow.Cells[0].Value = "False";
+            if (opcodedata.CurrentRow.Cells[0].Value.ToString() == "True") opcodedata.CurrentRow.Cells[0].Value = "False";
         }
 
+        //ausführen der befehle
         private int dooperator(string opcode, string opstring, int row)
         {
+            //Program counter
+            if (opcodedata[1, opcodedata.CurrentRow.Index].Value.ToString() != "")
+            txt_pc.Text = opcodedata[1, opcodedata.CurrentRow.Index].Value.ToString();
             
             int rownr = 0;
 
@@ -298,22 +303,22 @@ namespace PIC_Simulator
 
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
 
                     int locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
 
-                    string sf = dataGridView4[2, locrow].Value.ToString();
-                    string w = dataGridView2[2, 0].Value.ToString();
-                    int addwf = bin2dec(sf) + bin2dec(w);
+                    string speicherzellenval= speicherzellen[2, locrow].Value.ToString();
+                    string w = bank0[2, 0].Value.ToString();
+                    int addwf = bin2dec(speicherzellenval) + bin2dec(w);
                     if (addwf > 255)
                     {
                         carry = 1;
@@ -321,23 +326,23 @@ namespace PIC_Simulator
                     }
                     else carry = 0;
 
-                    for (int i = 128; bin2dec(w) > 15 || bin2dec(sf) > 15; i = i / 2)
+                    for (int i = 128; bin2dec(w) > 15 || bin2dec(speicherzellenval) > 15; i = i / 2)
                     {
                         if (bin2dec(w) >= i) w = dec2bin(bin2dec(w) - i);
-                        if (bin2dec(sf) >= i) sf = dec2bin(bin2dec(sf) - i);
+                        if (bin2dec(speicherzellenval) >= i) speicherzellenval= dec2bin(bin2dec(speicherzellenval) - i);
                     }
-                    int dc = bin2dec(sf) + bin2dec(w);
+                    int dc = bin2dec(speicherzellenval) + bin2dec(w);
                     if (dc > 15) digitcarry = 1;
                     else digitcarry = 0;
 
                     if (addwf == 0) zero = 1;
                     else zero = 0;
 
-                    if (d == "1") dataGridView4[2, locrow].Value = dec2bin(addwf);
+                    if (d == "1") speicherzellen[2, locrow].Value = dec2bin(addwf);
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = dec2bin(addwf);
-                        dataGridView3[2, 0].Value = dec2bin(addwf);
+                        bank0[2, 0].Value = dec2bin(addwf);
+                        bank1[2, 0].Value = dec2bin(addwf);
                     }
                     
 
@@ -352,44 +357,42 @@ namespace PIC_Simulator
 
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    bool e = false;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
-                            e = true;
                         }
                     }
 
-                    sf = dataGridView4[2, locrow].Value.ToString();
-                    w = dataGridView2[2, 0].Value.ToString();
+                    speicherzellenval= speicherzellen[2, locrow].Value.ToString();
+                    w = bank0[2, 0].Value.ToString();
 
 
-                    string equ = "";
+                    string andwf = "";
                     for (int i = 7; i >= 0; i--)
                     {
-                        if (sf.Substring(i, 1) == "1" && w.Substring(i, 1) == "1")
+                        if (speicherzellenval.Substring(i, 1) == "1" && w.Substring(i, 1) == "1")
                         {
-                            equ = "1" + equ;
+                            andwf = "1" + andwf;
                         }
                         else
                         {
-                            equ = "0" + equ;
+                            andwf = "0" + andwf;
                         }
                     }
-                    if (equ == "00000000") zero = 1;
+                    if (andwf == "00000000") zero = 1;
                     else zero = 0;
 
-                    if (d == "1") dataGridView4[2, locrow].Value = equ;
+                    if (d == "1") speicherzellen[2, locrow].Value = andwf;
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = equ;
-                        dataGridView3[2, 0].Value = equ;
+                        bank0[2, 0].Value = andwf;
+                        bank1[2, 0].Value = andwf;
                     }
 
 
@@ -401,14 +404,14 @@ namespace PIC_Simulator
 
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
                     bool ex = false;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                             ex = true;
@@ -416,11 +419,11 @@ namespace PIC_Simulator
                     }
                     if (ex)
                     {
-                        dataGridView4[2, locrow].Value = "00000000";
+                        speicherzellen[2, locrow].Value = "00000000";
                     }
                     else
                     {
-                        dataGridView4.Rows.Add("", loc, "00000000");
+                        speicherzellen.Rows.Add("", loc, "00000000");
                     }
 
                     zero = 1;
@@ -429,8 +432,8 @@ namespace PIC_Simulator
                 case 3:
                     //CLRW
 
-                    dataGridView2[2, 0].Value = "00000000";
-                    dataGridView3[2, 0].Value = "00000000";
+                    bank0[2, 0].Value = "00000000";
+                    bank1[2, 0].Value = "00000000";
                     zero = 1;
 
                     break;
@@ -442,34 +445,34 @@ namespace PIC_Simulator
 
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
                     string v;
-                    string f = dataGridView4[2, locrow].Value.ToString();
-                    string comp = "";
+                    string f = speicherzellen[2, locrow].Value.ToString();
+                    string comf = "";
                     for (int i = 0; i < 8; i++)
                     {
                         if (f.Substring(i, 1) == "1") v = "0";
                         else v = "1";
-                        comp = comp + v;
+                        comf = comf + v;
                     }
-                    if (comp == "00000000") zero = 1;
+                    if (comf == "00000000") zero = 1;
                     else zero = 0;
 
-                    if (d == "1") dataGridView4[2, locrow].Value = comp;
+                    if (d == "1") speicherzellen[2, locrow].Value = comf;
                     else
                     {
-                        dataGridView2[2, 0].Value = comp;
-                        dataGridView3[2, 0].Value = comp;
+                        bank0[2, 0].Value = comf;
+                        bank1[2, 0].Value = comf;
                     }
 
 
@@ -484,26 +487,26 @@ namespace PIC_Simulator
 
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
-                    int incf = bin2dec(dataGridView4[2, locrow].Value.ToString()) - 1;
-                    if (incf < 0) incf = 255;
-                    if (incf == 0) zero = 1;
+                    int decf = bin2dec(speicherzellen[2, locrow].Value.ToString()) - 1;
+                    if (decf < 0) decf = 255;
+                    if (decf == 0) zero = 1;
                     else zero = 0;
-                    if (d == "1") dataGridView4[2, locrow].Value = dec2bin(incf);
+                    if (d == "1") speicherzellen[2, locrow].Value = dec2bin(decf);
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = dec2bin(incf);
-                        dataGridView3[2, 0].Value = dec2bin(incf);
+                        bank0[2, 0].Value = dec2bin(decf);
+                        bank1[2, 0].Value = dec2bin(decf);
                     }
 
                     break;
@@ -515,33 +518,33 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
-                    incf = bin2dec(dataGridView4[2, locrow].Value.ToString()) - 1;
-                    if (incf < 0) incf = 255;
-                    if (d == "1") dataGridView4[2, locrow].Value = dec2bin(incf);
+                    int decfsz = bin2dec(speicherzellen[2, locrow].Value.ToString()) - 1;
+                    if (decfsz < 0) decfsz = 255;
+                    if (d == "1") speicherzellen[2, locrow].Value = dec2bin(decfsz);
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = dec2bin(incf);
-                        dataGridView3[2, 0].Value = dec2bin(incf);
+                        bank0[2, 0].Value = dec2bin(decfsz);
+                        bank1[2, 0].Value = dec2bin(decfsz);
                     }
-                    if (incf == 0)
+                    if (decfsz == 0)
                     {
                         befehlnr++;
                         TimerWertbefehl++;
                         zero = 1;
                         //rownr = rownr + 1;
-                        dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.White;
-                        dataGridView1.CurrentCell = dataGridView1[0, dataGridView1.CurrentRow.Index + 1];
+                        opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.White;
+                        opcodedata.CurrentCell = opcodedata[0, opcodedata.CurrentRow.Index + 1];
                         //dataGridView1.Rows[rownr - 1].DefaultCellStyle.BackColor = Color.White;
                     }
                     else zero = 0;
@@ -557,27 +560,27 @@ namespace PIC_Simulator
 
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
 
-                    incf = bin2dec(dataGridView4[2, locrow].Value.ToString()) + 1;
+                    int incf = bin2dec(speicherzellen[2, locrow].Value.ToString()) + 1;
                     if (incf > 255) incf = 0; 
                     if (incf == 0) zero = 1;
                     else zero = 0;
-                    if (d == "1") dataGridView4[2, locrow].Value = dec2bin(incf);
+                    if (d == "1") speicherzellen[2, locrow].Value = dec2bin(incf);
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = dec2bin(incf);
-                        dataGridView3[2, 0].Value = dec2bin(incf);
+                        bank0[2, 0].Value = dec2bin(incf);
+                        bank1[2, 0].Value = dec2bin(incf);
                     }
 
                     break;
@@ -589,32 +592,32 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
-                    incf = bin2dec(dataGridView4[2, locrow].Value.ToString()) + 1;
-                    if (incf > 255) incf = 0;
-                    if (d == "1") dataGridView4[2, locrow].Value = dec2bin(incf);
+                    int incfsz = bin2dec(speicherzellen[2, locrow].Value.ToString()) + 1;
+                    if (incfsz > 255) incfsz = 0;
+                    if (d == "1") speicherzellen[2, locrow].Value = dec2bin(incfsz);
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = dec2bin(incf);
-                        dataGridView3[2, 0].Value = dec2bin(incf);
+                        bank0[2, 0].Value = dec2bin(incfsz);
+                        bank1[2, 0].Value = dec2bin(incfsz);
                     }
-                    if (incf == 0)
+                    if (incfsz == 0)
                     {
                         befehlnr++;
                         TimerWertbefehl++;
                         zero = 1;
-                        dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.White;
-                        dataGridView1.CurrentCell = dataGridView1[0, dataGridView1.CurrentRow.Index + 1];
+                        opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.White;
+                        opcodedata.CurrentCell = opcodedata[0, opcodedata.CurrentRow.Index + 1];
 
                     }
                     else zero = 0;
@@ -628,40 +631,39 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
 
                     binarystring = binarystring.Substring(6);
-                    string w9 = dataGridView2[2, 0].Value.ToString();
-                    string equ9 = "";
+                    string iorwf = "";
                     for (int i = 7; i >= 0; i--)
                     {
-                        if (dataGridView4[2, locrow].Value.ToString().Substring(i, 1) == "1" || w9.Substring(i, 1) == "1")
+                        if (speicherzellen[2, locrow].Value.ToString().Substring(i, 1) == "1" || bank0[2, 0].Value.ToString().Substring(i, 1) == "1")
                         {
-                            equ9 = "1" + equ9;
+                            iorwf = "1" + iorwf;
                         }
                         else
                         {
-                            equ9 = "0" + equ9;
+                            iorwf = "0" + iorwf;
                         }
                     }
-                    if (equ9 == "00000000") zero = 1;
+                    if (iorwf == "00000000") zero = 1;
                     else zero = 0;
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = equ9;
-                        dataGridView3[2, 0].Value = equ9;
+                        bank0[2, 0].Value = iorwf;
+                        bank1[2, 0].Value = iorwf;
                     }
-                    else dataGridView4[2, locrow].Value = equ9;
+                    else speicherzellen[2, locrow].Value = iorwf;
 
                     break;
                 case 10:
@@ -671,66 +673,66 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
                     if (locrow != 1234567)
                     {
-                        if (dataGridView4[2, locrow].Value.ToString() == "00000000")
+                        if (speicherzellen[2, locrow].Value.ToString() == "00000000")
                             zero = 1;
                         else zero = 0;
                         if (d == "0")
                         {
-                            dataGridView2[2, 0].Value = dataGridView4[2, locrow].Value.ToString();
-                            dataGridView3[2, 0].Value = dataGridView4[2, locrow].Value.ToString();
+                            bank0[2, 0].Value = speicherzellen[2, locrow].Value.ToString();
+                            bank1[2, 0].Value = speicherzellen[2, locrow].Value.ToString();
                         }
                     }
                     else
                     {
-                        for (int i = 0; dataGridView2.Rows.Count > i; i++)
+                        for (int i = 0; bank0.Rows.Count > i; i++)
                         {
-                            if (dataGridView2[1, i].Value.ToString() == loc)
+                            if (bank0[1, i].Value.ToString() == loc)
                             {
                                 locrow = i;
                             }
                         }
                         if (locrow != 1234567)
                         {
-                            if (dataGridView2[2, locrow].Value.ToString() == "00000000")
+                            if (bank0[2, locrow].Value.ToString() == "00000000")
                                 zero = 1;
                             else zero = 0;
                             if (d == "0")
                             {
-                                dataGridView2[2, 0].Value = dataGridView2[2, locrow].Value.ToString();
-                                dataGridView3[2, 0].Value = dataGridView2[2, locrow].Value.ToString();
+                                bank0[2, 0].Value = bank0[2, locrow].Value.ToString();
+                                bank1[2, 0].Value = bank0[2, locrow].Value.ToString();
                             }
                         }
                         else
                         {
-                            for (int i = 0; dataGridView3.Rows.Count > i; i++)
+                            for (int i = 0; bank1.Rows.Count > i; i++)
                             {
-                                if (dataGridView2[1, i].Value.ToString() == loc)
+                                if (bank0[1, i].Value.ToString() == loc)
                                 {
                                     locrow = i;
                                 }
                             }
                             if (locrow != 1234567)
                             {
-                                if (dataGridView3[2, locrow].Value.ToString() == "00000000")
+                                if (bank1[2, locrow].Value.ToString() == "00000000")
                                     zero = 1;
                                 else zero = 0;
                                 if (d == "0")
                                 {
-                                    dataGridView2[2, 0].Value = dataGridView3[2, locrow].Value.ToString();
-                                    dataGridView3[2, 0].Value = dataGridView3[2, locrow].Value.ToString();
+                                    bank0[2, 0].Value = bank1[2, locrow].Value.ToString();
+                                    bank1[2, 0].Value = bank1[2, locrow].Value.ToString();
                                 }
                             }
                         }
@@ -746,14 +748,14 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     bool exist = false;
                     int locrow1 = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow1 = i;
                             exist = true;
@@ -761,19 +763,19 @@ namespace PIC_Simulator
                     }
                     if (exist)
                     {
-                        dataGridView4[2, locrow1].Value = dataGridView2[2, 0].Value.ToString();
+                        speicherzellen[2, locrow1].Value = bank0[2, 0].Value.ToString();
                     }
                     else
                     {
-                        dataGridView4.Rows.Add("", loc, dataGridView2[2, 0].Value.ToString());
+                        speicherzellen.Rows.Add("", loc, bank0[2, 0].Value.ToString());
                     }
-                    for (int i = 0; i < dataGridView3.RowCount; i++)
+                    for (int i = 0; i < bank1.RowCount; i++)
                     {
-                        string a = dataGridView4[1, dataGridView4.RowCount - 1].Value.ToString();
-                        string c = dataGridView3[1, i].Value.ToString(); ;
-                        if (dataGridView4[1, dataGridView4.RowCount - 1].Value.ToString() == dataGridView3[1, i].Value.ToString())
+                        string a = speicherzellen[1, speicherzellen.RowCount - 1].Value.ToString();
+                        string c = bank1[1, i].Value.ToString(); ;
+                        if (speicherzellen[1, speicherzellen.RowCount - 1].Value.ToString() == bank1[1, i].Value.ToString())
                         {
-                            dataGridView3[2, i].Value = dataGridView4[2, dataGridView4.RowCount - 1].Value;
+                            bank1[2, i].Value = speicherzellen[2, speicherzellen.RowCount - 1].Value;
                         }
                     }
 
@@ -789,18 +791,18 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 123456;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
-                    string shift = dataGridView4[2, locrow].Value.ToString() + carry.ToString();
+                    string shift = speicherzellen[2, locrow].Value.ToString() + carry.ToString();
                     carry = Convert.ToInt32(shift.Substring(0, 1));
                     shift = shift.Substring(1);
 
@@ -808,11 +810,11 @@ namespace PIC_Simulator
                     else zero = 0;
 
 
-                    if (d == "1") dataGridView4[2, locrow].Value = shift;
+                    if (d == "1") speicherzellen[2, locrow].Value = shift;
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = shift;
-                        dataGridView3[2, 0].Value = shift;
+                        bank0[2, 0].Value = shift;
+                        bank1[2, 0].Value = shift;
                     }
 
                     break;
@@ -823,29 +825,29 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 123456;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
-                    shift = carry.ToString() + dataGridView4[2, locrow].Value.ToString();
+                    shift = carry.ToString() + speicherzellen[2, locrow].Value.ToString();
                     carry = Convert.ToInt32(shift.Substring(8, 1));
                     shift = shift.Substring(0, 8);
                     if (shift == "00000000") zero = 1;
                     else zero = 0;
 
 
-                    if (d == "1") dataGridView4[2, locrow].Value = shift;
+                    if (d == "1") speicherzellen[2, locrow].Value = shift;
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = shift;
-                        dataGridView3[2, 0].Value = shift;
+                        bank0[2, 0].Value = shift;
+                        bank1[2, 0].Value = shift;
                     }
 
 
@@ -859,18 +861,18 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 123456;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
-                    int sublw = bin2dec(dataGridView4[2, locrow].Value.ToString()) - bin2dec(dataGridView2[2, 0].Value.ToString());
+                    int sublw = bin2dec(speicherzellen[2, locrow].Value.ToString()) - bin2dec(bank0[2, 0].Value.ToString());
 
                     if (sublw < 0)
                     {
@@ -879,24 +881,24 @@ namespace PIC_Simulator
                     }
                     else carry = 1;
 
-                    w = dataGridView2[2, 0].Value.ToString();
-                    sf = dataGridView4[2, locrow].Value.ToString();
-                    for (int i = 128; bin2dec(w) > 15 || bin2dec(sf) > 15; i = i / 2)
+                    w = bank0[2, 0].Value.ToString();
+                    speicherzellenval= speicherzellen[2, locrow].Value.ToString();
+                    for (int i = 128; bin2dec(w) > 15 || bin2dec(speicherzellenval) > 15; i = i / 2)
                     {
                         if (bin2dec(w) >= i) w = dec2bin(bin2dec(w) - i);
-                        if (bin2dec(sf) >= i) sf = dec2bin(bin2dec(sf) - i);
+                        if (bin2dec(speicherzellenval) >= i) speicherzellenval= dec2bin(bin2dec(speicherzellenval) - i);
                     }
-                    dc = bin2dec(sf) - bin2dec(w);
+                    dc = bin2dec(speicherzellenval) - bin2dec(w);
                     if (dc < 0) digitcarry = 0;
                     else digitcarry = 1;
 
                     if (sublw == 0) zero = 1;
                     else zero = 0;
-                    if (d == "1") dataGridView4[2, locrow].Value = dec2bin(sublw);
+                    if (d == "1") speicherzellen[2, locrow].Value = dec2bin(sublw);
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = dec2bin(sublw);
-                        dataGridView3[2, 0].Value = dec2bin(sublw);
+                        bank0[2, 0].Value = dec2bin(sublw);
+                        bank1[2, 0].Value = dec2bin(sublw);
                     }
 
 
@@ -908,26 +910,26 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 123456;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
-                    string swap = dataGridView4[2, locrow].Value.ToString().Substring(4) + dataGridView4[2, locrow].Value.ToString().Substring(0, 4);
+                    string swap = speicherzellen[2, locrow].Value.ToString().Substring(4) + speicherzellen[2, locrow].Value.ToString().Substring(0, 4);
 
 
 
-                    if (d == "1") dataGridView4[2, locrow].Value = swap;
+                    if (d == "1") speicherzellen[2, locrow].Value = swap;
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = swap;
-                        dataGridView3[2, 0].Value = swap;
+                        bank0[2, 0].Value = swap;
+                        bank1[2, 0].Value = swap;
                     }
 
                     break;
@@ -939,38 +941,37 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 123456;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
-                    string w41 = dataGridView2[2, 0].Value.ToString();
-                    string equ31 = "";
+                    string xorwf = "";
                     for (int i = 7; i >= 0; i--)
                     {
-                        if ((dataGridView4[2, locrow].Value.ToString().Substring(i, 1) == "1" && w41.Substring(i, 1) == "0") || (w41.Substring(i, 1) == "1" && dataGridView4[2, locrow].Value.ToString().Substring(i, 1) == "0"))
+                        if ((speicherzellen[2, locrow].Value.ToString().Substring(i, 1) == "1" && bank0[2, 0].Value.ToString().Substring(i, 1) == "0") || (bank0[2, 0].Value.ToString().Substring(i, 1) == "1" && speicherzellen[2, locrow].Value.ToString().Substring(i, 1) == "0"))
                         {
-                            equ31 = "1" + equ31;
+                            xorwf = "1" + xorwf;
                         }
                         else
                         {
-                            equ31 = "0" + equ31;
+                            xorwf = "0" + xorwf;
                         }
                     }
-                    if (equ31 == "00000000") zero = 1;
+                    if (xorwf == "00000000") zero = 1;
                     else zero = 0;
 
-                    if (d == "1") dataGridView4[2, locrow].Value = equ31;
+                    if (d == "1") speicherzellen[2, locrow].Value = xorwf;
                     if (d == "0")
                     {
-                        dataGridView2[2, 0].Value = equ31;
-                        dataGridView3[2, 0].Value = equ31;
+                        bank0[2, 0].Value = xorwf;
+                        bank1[2, 0].Value = xorwf;
                     }
 
                     break;
@@ -985,13 +986,13 @@ namespace PIC_Simulator
 
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
@@ -1003,23 +1004,23 @@ namespace PIC_Simulator
                         bcf = "";
                         if (b > 0 && b < 7)
                         {
-                            bcf = dataGridView4[2, locrow].Value.ToString().Substring(0, b) + "0" + dataGridView4[2, locrow].Value.ToString().Substring(b + 1);
+                            bcf = speicherzellen[2, locrow].Value.ToString().Substring(0, b) + "0" + speicherzellen[2, locrow].Value.ToString().Substring(b + 1);
                         }
                         else
                         {
                             if (b == 0)
-                                bcf = "0" + dataGridView4[2, locrow].Value.ToString().Substring(b + 1);
-                            else bcf = bcf = dataGridView4[2, locrow].Value.ToString().Substring(0, b) + "0";
+                                bcf = "0" + speicherzellen[2, locrow].Value.ToString().Substring(b + 1);
+                            else bcf = bcf = speicherzellen[2, locrow].Value.ToString().Substring(0, b) + "0";
                         }
                         if (bcf == "00000000") zero = 1;
                         else zero = 0;
-                        dataGridView4[2, locrow].Value = bcf;
+                        speicherzellen[2, locrow].Value = bcf;
                     }
                     else
                     {
-                        for (int i = 0; dataGridView3.Rows.Count > i; i++)
+                        for (int i = 0; bank1.Rows.Count > i; i++)
                         {
-                            if (dataGridView3[1, i].Value.ToString() == loc)
+                            if (bank1[1, i].Value.ToString() == loc)
                             {
                                 locrow = i;
                             }
@@ -1029,35 +1030,35 @@ namespace PIC_Simulator
                         {
                             b = 7 - b;
                             bcf = "";
-                            string s = dataGridView3[2, locrow].Value.ToString();
+                            string s = bank1[2, locrow].Value.ToString();
                             if (b > 0 && b < 7)
                             {
-                                bcf = dataGridView3[2, locrow].Value.ToString().Substring(0, b) + "0" + dataGridView3[2, locrow].Value.ToString().Substring(b + 1);
+                                bcf = bank1[2, locrow].Value.ToString().Substring(0, b) + "0" + bank1[2, locrow].Value.ToString().Substring(b + 1);
                             }
                             else
                             {
                                 if (b == 0)
-                                    bcf = "0" + dataGridView3[2, locrow].Value.ToString().Substring(b + 1);
-                                else bcf = bcf = dataGridView3[2, locrow].Value.ToString().Substring(0, b) + "0";
+                                    bcf = "0" + bank1[2, locrow].Value.ToString().Substring(b + 1);
+                                else bcf = bcf = bank1[2, locrow].Value.ToString().Substring(0, b) + "0";
                             }
                             if (bcf == "00000000") zero = 1;
                             else zero = 0;
-                            dataGridView3[2, locrow].Value = bcf;
-                            if (dataGridView3[2,4].Value.ToString() == bcf)
+                            bank1[2, locrow].Value = bcf;
+                            if (bank1[2,4].Value.ToString() == bcf)
                             {
-                                dataGridView2[2, 4].Value = dataGridView3[2, 4].Value.ToString();
-                                for (int i = 0; i < dataGridView4.RowCount; i++)
+                                bank0[2, 4].Value = bank1[2, 4].Value.ToString();
+                                for (int i = 0; i < speicherzellen.RowCount; i++)
                                 {
                                     int testrow = i;
-                                    for (j = 0; j < dataGridView3.RowCount; j++)
+                                    for (j = 0; j < bank1.RowCount; j++)
                                     {
-                                        if (dataGridView3[1, j].Value.ToString() == dataGridView4[1, i].Value.ToString())
+                                        if (bank1[1, j].Value.ToString() == speicherzellen[1, i].Value.ToString())
                                         {
-                                            dataGridView4[2,i].Value = dataGridView3[2, j].Value.ToString();
+                                            speicherzellen[2,i].Value = bank1[2, j].Value.ToString();
                                         }
-                                        if (dataGridView2[1, j].Value.ToString() == dataGridView4[1, i].Value.ToString())
+                                        if (bank0[1, j].Value.ToString() == speicherzellen[1, i].Value.ToString())
                                         {
-                                            dataGridView4[2, i].Value = dataGridView2[2, j].Value.ToString();
+                                            speicherzellen[2, i].Value = bank0[2, j].Value.ToString();
                                         }
                                     }
                                 }
@@ -1066,9 +1067,9 @@ namespace PIC_Simulator
                         }
                         else
                         {
-                            for (int i = 0; dataGridView3.Rows.Count > i; i++)
+                            for (int i = 0; bank1.Rows.Count > i; i++)
                             {
-                                if (dataGridView2[1, i].Value.ToString() == loc)
+                                if (bank0[1, i].Value.ToString() == loc)
                                 {
                                     locrow = i;
                                 }
@@ -1078,28 +1079,28 @@ namespace PIC_Simulator
                             {
                                 b = 7 - b;
                                 bcf = "";
-                                string s = dataGridView2[2, locrow].Value.ToString();
+                                string s = bank0[2, locrow].Value.ToString();
                                 if (b > 0 && b < 7)
                                 {
-                                    bcf = dataGridView2[2, locrow].Value.ToString().Substring(0, b) + "0" + dataGridView2[2, locrow].Value.ToString().Substring(b + 1);
+                                    bcf = bank0[2, locrow].Value.ToString().Substring(0, b) + "0" + bank0[2, locrow].Value.ToString().Substring(b + 1);
                                 }
                                 else
                                 {
                                     if (b == 0)
-                                        bcf = "0" + dataGridView2[2, locrow].Value.ToString().Substring(b + 1);
-                                    else bcf = bcf = dataGridView2[2, locrow].Value.ToString().Substring(0, b) + "0";
+                                        bcf = "0" + bank0[2, locrow].Value.ToString().Substring(b + 1);
+                                    else bcf = bcf = bank0[2, locrow].Value.ToString().Substring(0, b) + "0";
                                 }
                                 if (bcf == "00000000") zero = 1;
                                 else zero = 0;
-                                dataGridView2[2, locrow].Value = bcf;
-                                for (int i = 0; i < dataGridView4.RowCount; i++)
+                                bank0[2, locrow].Value = bcf;
+                                for (int i = 0; i < speicherzellen.RowCount; i++)
                                 {
                                     int testrow = i;
-                                    for (j = 0; j < dataGridView3.RowCount; j++)
+                                    for (j = 0; j < bank1.RowCount; j++)
                                     {
-                                        if (dataGridView3[1, j].Value.ToString() == dataGridView4[1, i].Value.ToString())
+                                        if (bank1[1, j].Value.ToString() == speicherzellen[1, i].Value.ToString())
                                         {
-                                            dataGridView4[2, j].Value = dataGridView3[2, i].Value.ToString();
+                                            speicherzellen[2, j].Value = bank1[2, i].Value.ToString();
                                         }
                                     }
                                 }
@@ -1121,13 +1122,13 @@ namespace PIC_Simulator
 
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
@@ -1136,27 +1137,27 @@ namespace PIC_Simulator
                     if (locrow != 1234567)
                     {
                         b = 7 - b;
-                        bsf = "";
-                        string s = dataGridView4[2, locrow].Value.ToString();
+                        bsf= "";
+                        string s = speicherzellen[2, locrow].Value.ToString();
                         if (b > 0 && b < 7)
                         {
-                            bsf = dataGridView4[2, locrow].Value.ToString().Substring(0, b) + "1" + dataGridView4[2, locrow].Value.ToString().Substring(b + 1);
+                            bsf= speicherzellen[2, locrow].Value.ToString().Substring(0, b) + "1" + speicherzellen[2, locrow].Value.ToString().Substring(b + 1);
                         }
                         else
                         {
                             if (b == 0)
-                                bsf = "1" + dataGridView4[2, locrow].Value.ToString().Substring(b + 1);
-                            else bsf = bsf = dataGridView4[2, locrow].Value.ToString().Substring(0, b) + "1";
+                                bsf= "1" + speicherzellen[2, locrow].Value.ToString().Substring(b + 1);
+                            else bsf= bsf= speicherzellen[2, locrow].Value.ToString().Substring(0, b) + "1";
                         }
-                        if (bsf == "00000000") zero = 1;
+                        if (bsf== "00000000") zero = 1;
                         else zero = 0;
-                        dataGridView4[2, locrow].Value = bsf;
+                        speicherzellen[2, locrow].Value = bsf;
                     }
                     else
                     {
-                        for (int i = 0; dataGridView3.Rows.Count > i; i++)
+                        for (int i = 0; bank1.Rows.Count > i; i++)
                         {
-                            if (dataGridView3[1, i].Value.ToString() == loc)
+                            if (bank1[1, i].Value.ToString() == loc)
                             {
                                 locrow = i;
                             }
@@ -1165,36 +1166,36 @@ namespace PIC_Simulator
                         if (locrow != 1234567)
                         {
                             b = 7 - b;
-                            bsf = "";
-                            string s = dataGridView3[2, locrow].Value.ToString();
+                            bsf= "";
+                            string s = bank1[2, locrow].Value.ToString();
                             if (b > 0 && b < 7)
                             {
-                                bsf = dataGridView3[2, locrow].Value.ToString().Substring(0, b) + "1" + dataGridView3[2, locrow].Value.ToString().Substring(b + 1);
+                                bsf= bank1[2, locrow].Value.ToString().Substring(0, b) + "1" + bank1[2, locrow].Value.ToString().Substring(b + 1);
                             }
                             else
                             {
                                 if (b == 0)
-                                    bsf = "1" + dataGridView3[2, locrow].Value.ToString().Substring(b + 1);
-                                else bsf = bsf = dataGridView3[2, locrow].Value.ToString().Substring(0, b) + "1";
+                                    bsf= "1" + bank1[2, locrow].Value.ToString().Substring(b + 1);
+                                else bsf= bsf= bank1[2, locrow].Value.ToString().Substring(0, b) + "1";
                             }
-                            if (bsf == "00000000") zero = 1;
+                            if (bsf== "00000000") zero = 1;
                             else zero = 0;
-                            dataGridView3[2, locrow].Value = bsf;
-                            if (dataGridView3[2, 4].Value.ToString() == bsf)
+                            bank1[2, locrow].Value = bsf;
+                            if (bank1[2, 4].Value.ToString() == bsf)
                             {
-                                dataGridView2[2, 4].Value = dataGridView3[2, 4].Value.ToString();
-                                for (int i = 0; i < dataGridView4.RowCount; i++)
+                                bank0[2, 4].Value = bank1[2, 4].Value.ToString();
+                                for (int i = 0; i < speicherzellen.RowCount; i++)
                                 {
                                     int testrow = i;
-                                    for (j = 0; j < dataGridView3.RowCount; j++)
+                                    for (j = 0; j < bank1.RowCount; j++)
                                     {
-                                        if (dataGridView3[1, j].Value.ToString() == dataGridView4[1, i].Value.ToString())
+                                        if (bank1[1, j].Value.ToString() == speicherzellen[1, i].Value.ToString())
                                         {
-                                            dataGridView4[2, i].Value = dataGridView3[2, j].Value.ToString();
+                                            speicherzellen[2, i].Value = bank1[2, j].Value.ToString();
                                         }
-                                        if (dataGridView2[1, j].Value.ToString() == dataGridView4[1, i].Value.ToString())
+                                        if (bank0[1, j].Value.ToString() == speicherzellen[1, i].Value.ToString())
                                         {
-                                            dataGridView4[2, i].Value = dataGridView2[2, j].Value.ToString();
+                                            speicherzellen[2, i].Value = bank0[2, j].Value.ToString();
                                         }
                                     }
                                 }
@@ -1203,9 +1204,9 @@ namespace PIC_Simulator
                         }
                         else
                         {
-                            for (int i = 0; dataGridView3.Rows.Count > i; i++)
+                            for (int i = 0; bank1.Rows.Count > i; i++)
                             {
-                                if (dataGridView2[1, i].Value.ToString() == loc)
+                                if (bank0[1, i].Value.ToString() == loc)
                                 {
                                     locrow = i;
                                 }
@@ -1214,29 +1215,29 @@ namespace PIC_Simulator
                             if (locrow != 1234567)
                             {
                                 b = 7 - b;
-                                bsf = "";
-                                string s = dataGridView2[2, locrow].Value.ToString();
+                                bsf= "";
+                                string s = bank0[2, locrow].Value.ToString();
                                 if (b > 0 && b < 7)
                                 {
-                                    bsf = dataGridView2[2, locrow].Value.ToString().Substring(0, b) + "1" + dataGridView2[2, locrow].Value.ToString().Substring(b + 1);
+                                    bsf= bank0[2, locrow].Value.ToString().Substring(0, b) + "1" + bank0[2, locrow].Value.ToString().Substring(b + 1);
                                 }
                                 else
                                 {
                                     if (b == 0)
-                                        bsf = "1" + dataGridView2[2, locrow].Value.ToString().Substring(b + 1);
-                                    else bsf = bsf = dataGridView2[2, locrow].Value.ToString().Substring(0, b) + "1";
+                                        bsf= "1" + bank0[2, locrow].Value.ToString().Substring(b + 1);
+                                    else bsf= bsf= bank0[2, locrow].Value.ToString().Substring(0, b) + "1";
                                 }
-                                if (bsf == "00000000") zero = 1;
+                                if (bsf== "00000000") zero = 1;
                                 else zero = 0;
-                                dataGridView2[2, locrow].Value = bsf;
-                                for (int i = 0; i < dataGridView4.RowCount; i++)
+                                bank0[2, locrow].Value = bsf;
+                                for (int i = 0; i < speicherzellen.RowCount; i++)
                                 {
                                     int testrow = i;
-                                    for (j=0;j<dataGridView2.RowCount;j++)
+                                    for (j=0;j<bank0.RowCount;j++)
                                     {
-                                        if (dataGridView2[1,j].Value.ToString() == dataGridView4[1,i].Value.ToString())
+                                        if (bank0[1,j].Value.ToString() == speicherzellen[1,i].Value.ToString())
                                         {
-                                            dataGridView4[2, j].Value = dataGridView2[2, i].Value.ToString();
+                                            speicherzellen[2, j].Value = bank0[2, i].Value.ToString();
                                         }
                                     }
                                 }
@@ -1255,24 +1256,24 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
                     }
                     b = 7 - b;
-                    if (dataGridView4[2, locrow].Value.ToString().Substring(b, 1) == "0")
+                    if (speicherzellen[2, locrow].Value.ToString().Substring(b, 1) == "0")
                     {
                         befehlnr++;
                         TimerWertbefehl++;
-                        dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.White;
-                        dataGridView1.CurrentCell = dataGridView1[0, dataGridView1.CurrentRow.Index + 1];
+                        opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.White;
+                        opcodedata.CurrentCell = opcodedata[0, opcodedata.CurrentRow.Index + 1];
                         //dataGridView1.Rows[j - 1].DefaultCellStyle.BackColor = Color.White;
                     }
                     break;
@@ -1280,7 +1281,7 @@ namespace PIC_Simulator
                     //ADDLW
 
                     binarystring = binarystring.Substring(6);
-                    string w3 = dataGridView2[2, 0].Value.ToString();
+                    string w3 = bank0[2, 0].Value.ToString();
                     int addlw = bin2dec(binarystring) + bin2dec(w3);
                     if (addlw > 255)
                     {
@@ -1289,44 +1290,44 @@ namespace PIC_Simulator
                     }
                     else carry = 0;
 
-                    w = dataGridView2[2, 0].Value.ToString();
-                    sf = binarystring;
-                    for (int i = 128; bin2dec(w) > 15 || bin2dec(sf) > 15; i = i / 2)
+                    w = bank0[2, 0].Value.ToString();
+                    speicherzellenval= binarystring;
+                    for (int i = 128; bin2dec(w) > 15 || bin2dec(speicherzellenval) > 15; i = i / 2)
                     {
                         if (bin2dec(w) >= i) w = dec2bin(bin2dec(w) - i);
-                        if (bin2dec(sf) >= i) sf = dec2bin(bin2dec(sf) - i);
+                        if (bin2dec(speicherzellenval) >= i) speicherzellenval= dec2bin(bin2dec(speicherzellenval) - i);
                     }
-                    dc = bin2dec(sf) + bin2dec(w);
+                    dc = bin2dec(speicherzellenval) + bin2dec(w);
                     if (dc > 15) digitcarry = 1;
                     else digitcarry = 0;
 
                     if (addlw == 0) zero = 1;
                     else zero = 0;
-                    dataGridView2[2, 0].Value = dec2bin(addlw);
-                    dataGridView3[2, 0].Value = dec2bin(addlw);
+                    bank0[2, 0].Value = dec2bin(addlw);
+                    bank1[2, 0].Value = dec2bin(addlw);
 
                     break;
                 case 23:
                     //ANDLW
 
                     binarystring = binarystring.Substring(6);
-                    string w1 = dataGridView2[2, 0].Value.ToString();
-                    equ = "";
+                    string w1 = bank0[2, 0].Value.ToString();
+                    string andlw = "";
                     for (int i = 7; i >= 0; i--)
                     {
                         if (binarystring.Substring(i, 1) == "1" && w1.Substring(i, 1) == "1")
                         {
-                            equ = "1" + equ;
+                            andlw = "1" + andlw;
                         }
                         else
                         {
-                            equ = "0" + equ;
+                            andlw = "0" + andlw;
                         }
                     }
-                    if (equ == "00000000") zero = 1;
+                    if (andlw == "00000000") zero = 1;
                     else zero = 0;
-                    dataGridView2[2, 0].Value = equ;
-                    dataGridView3[2, 0].Value = equ;
+                    bank0[2, 0].Value = andlw;
+                    bank1[2, 0].Value = andlw;
                     break;
 
                 case 24:
@@ -1337,13 +1338,14 @@ namespace PIC_Simulator
 
                     string addressc = BinaryStringToHexString(binarystring);
                     int backrow = row;
-                    string call = dataGridView1.Rows[row].Cells[3].Value.ToString().Substring(5);
+                    string call = opcodedata.Rows[row].Cells[3].Value.ToString().Substring(5);
 
-                    for (int m = 0; m < dataGridView1.RowCount; m++)
+                    for (int m = 0; m < opcodedata.RowCount; m++)
                     {
-                        string inxsdufjkm = dataGridView1.Rows[m].Cells[1].Value.ToString();
-                        if (!inxsdufjkm.EndsWith("h")) inxsdufjkm = inxsdufjkm + "h";
-                        if (inxsdufjkm == addressc)
+                        string opaddress = opcodedata.Rows[m].Cells[1].Value.ToString();
+                        if (!opaddress.EndsWith("h")) opaddress = opaddress + "h";
+                        while (opaddress.Length > 3) opaddress = opaddress.Substring(1);
+                        if (opaddress == addressc)
                         {
                             rownr = m;
                         }
@@ -1351,7 +1353,7 @@ namespace PIC_Simulator
 
                     //  dataGridView1.Rows[row].DefaultCellStyle.BackColor = Color.White;
                     returnrow = row;
-                    textBox5.Text = dataGridView1[1, row].Value.ToString();
+                    txt_stack.Text = opcodedata[1, row].Value.ToString();
                     return rownr -1;
 
                     break;
@@ -1365,17 +1367,19 @@ namespace PIC_Simulator
                     break;
                 case 26:
                     //GOTO
-                    befehlnr++; TimerWertbefehl++;
+                    befehlnr++;
+                    TimerWertbefehl++;
                     binarystring = binarystring.Substring(3);
 
                     string address = BinaryStringToHexString(binarystring);
 
 
-                    for (int m = 0; m < dataGridView1.RowCount; m++)
+                    for (int m = 0; m < opcodedata.RowCount; m++)
                     {
-                        string inxsdufjkm = dataGridView1.Rows[m].Cells[1].Value.ToString();
-                        if (!inxsdufjkm.EndsWith("h")) inxsdufjkm = inxsdufjkm + "h";
-                        if (inxsdufjkm == address)
+                        string opaddress = opcodedata.Rows[m].Cells[1].Value.ToString();
+                        if (!opaddress.EndsWith("h")) opaddress = opaddress + "h";
+                        while (opaddress.Length > 3) opaddress = opaddress.Substring(1);
+                        if (opaddress == address)
                         {
                             rownr = m;
                         }
@@ -1390,38 +1394,38 @@ namespace PIC_Simulator
                     //IORLW
 
                     binarystring = binarystring.Substring(6);
-                    string w2 = dataGridView2[2, 0].Value.ToString();
-                    string equ2 = "";
+                    string w2 = bank0[2, 0].Value.ToString();
+                    string iorlw = "";
                     for (int i = 7; i >= 0; i--)
                     {
                         if (binarystring.Substring(i, 1) == "1" || w2.Substring(i, 1) == "1")
                         {
-                            equ2 = "1" + equ2;
+                            iorlw = "1" + iorlw;
                         }
                         else
                         {
-                            equ2 = "0" + equ2;
+                            iorlw = "0" + iorlw;
                         }
                     }
-                    if (equ2 == "00000000") zero = 1;
+                    if (iorlw == "00000000") zero = 1;
                     else zero = 0;
-                    dataGridView2[2, 0].Value = equ2;
-                    dataGridView3[2, 0].Value = equ2;
+                    bank0[2, 0].Value = iorlw;
+                    bank1[2, 0].Value = iorlw;
 
                     break;
                 case 28:
                     //MOVLW
 
                     binarystring = binarystring.Substring(6);
-                    dataGridView2[2, 0].Value = binarystring;
-                    dataGridView3[2, 0].Value = binarystring;
+                    bank0[2, 0].Value = binarystring;
+                    bank1[2, 0].Value = binarystring;
 
                     break;
                 case 29:
                     //RETFIE
                     befehlnr++;
                     TimerWertbefehl++;
-                    dataGridView2[2, 11].Value = "1" + dataGridView2[2, 11].Value.ToString().Substring(1);
+                    bank0[2, 11].Value = "1" + bank0[2, 11].Value.ToString().Substring(1);
 
                     break;
                 case 30:
@@ -1429,11 +1433,11 @@ namespace PIC_Simulator
                     befehlnr++;
                     TimerWertbefehl++;
                     binarystring = binarystring.Substring(6);
-                    dataGridView2[2, 0].Value = binarystring;
-                    dataGridView3[2, 0].Value = binarystring;
+                    bank0[2, 0].Value = binarystring;
+                    bank1[2, 0].Value = binarystring;
                     int sendreturnrow = returnrow + 1;
                     returnrow = 1234567;
-                    textBox5.Text = "";
+                    txt_stack.Text = "";
                     return sendreturnrow;
 
                     break;
@@ -1443,7 +1447,7 @@ namespace PIC_Simulator
                     TimerWertbefehl++;
                     sendreturnrow = returnrow + 1;
                     returnrow = 1234567;
-                    textBox5.Text = "";
+                    txt_stack.Text = "";
                     return sendreturnrow;
                     break;
                 case 32:
@@ -1457,7 +1461,7 @@ namespace PIC_Simulator
                     //SUBLW
 
                     binarystring = binarystring.Substring(6);
-                    string w5 = dataGridView2[2, 0].Value.ToString();
+                    string w5 = bank0[2, 0].Value.ToString();
                     sublw = bin2dec(binarystring) - bin2dec(w5);
 
                     if (sublw < 0)
@@ -1467,22 +1471,22 @@ namespace PIC_Simulator
                     }
                     else carry = 1;
 
-                    w = dataGridView2[2, 0].Value.ToString();
-                    sf = binarystring;
-                    for (int i = 128; bin2dec(w) > 15 || bin2dec(sf) > 15; i = i / 2)
+                    w = bank0[2, 0].Value.ToString();
+                    speicherzellenval= binarystring;
+                    for (int i = 128; bin2dec(w) > 15 || bin2dec(speicherzellenval) > 15; i = i / 2)
                     {
                         if (bin2dec(w) >= i) w = dec2bin(bin2dec(w) - i);
-                        if (bin2dec(sf) >= i) sf = dec2bin(bin2dec(sf) - i);
+                        if (bin2dec(speicherzellenval) >= i) speicherzellenval= dec2bin(bin2dec(speicherzellenval) - i);
                     }
-                    dc = bin2dec(sf) - bin2dec(w);
+                    dc = bin2dec(speicherzellenval) - bin2dec(w);
                     if (dc < 0) digitcarry = 0;
                     else digitcarry = 1;
 
                     if (sublw == 0) zero = 1;
                     else zero = 0;
 
-                    dataGridView2[2, 0].Value = dec2bin(sublw);
-                    dataGridView3[2, 0].Value = dec2bin(sublw);
+                    bank0[2, 0].Value = dec2bin(sublw);
+                    bank1[2, 0].Value = dec2bin(sublw);
                     //l-w=w
 
 
@@ -1491,23 +1495,23 @@ namespace PIC_Simulator
                     //XORLW
 
                     binarystring = binarystring.Substring(6);
-                    string w4 = dataGridView2[2, 0].Value.ToString();
-                    string equ3 = "";
+                    string w4 = bank0[2, 0].Value.ToString();
+                    string xorlw = "";
                     for (int i = 7; i >= 0; i--)
                     {
                         if ((binarystring.Substring(i, 1) == "1" && w4.Substring(i, 1) == "0") || (w4.Substring(i, 1) == "1" && binarystring.Substring(i, 1) == "0"))
                         {
-                            equ3 = "1" + equ3;
+                            xorlw = "1" + xorlw;
                         }
                         else
                         {
-                            equ3 = "0" + equ3;
+                            xorlw = "0" + xorlw;
                         }
                     }
-                    if (equ3 == "00000000") zero = 1;
+                    if (xorlw == "00000000") zero = 1;
                     else zero = 0;
-                    dataGridView2[2, 0].Value = equ3;
-                    dataGridView3[2, 0].Value = equ3;
+                    bank0[2, 0].Value = xorlw;
+                    bank1[2, 0].Value = xorlw;
 
                     break;
 
@@ -1519,13 +1523,13 @@ namespace PIC_Simulator
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
                     {
-                        loc = BinaryStringToHexString(dataGridView2[2, 5].Value.ToString());
+                        loc = BinaryStringToHexString(bank0[2, 5].Value.ToString());
                     }
-                    if (dataGridView2[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
+                    if (bank0[2, 4].Value.ToString().Substring(2, 1) == "1" && loc.StartsWith("0")) loc = "8" + loc.Substring(1);
                     locrow = 1234567;
-                    for (int i = 0; dataGridView4.Rows.Count > i; i++)
+                    for (int i = 0; speicherzellen.Rows.Count > i; i++)
                     {
-                        if (dataGridView4[1, i].Value.ToString() == loc)
+                        if (speicherzellen[1, i].Value.ToString() == loc)
                         {
                             locrow = i;
                         }
@@ -1533,50 +1537,50 @@ namespace PIC_Simulator
                     b = 7 - b;
                     if (locrow != 1234567)
                     {
-                        if (dataGridView4[2, locrow].Value.ToString().Substring(b, 1) == "1")
+                        if (speicherzellen[2, locrow].Value.ToString().Substring(b, 1) == "1")
                         {
                             befehlnr++;
                             TimerWertbefehl++;
-                            dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.White;
-                            dataGridView1.CurrentCell = dataGridView1[0, dataGridView1.CurrentRow.Index + 1];
+                            opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.White;
+                            opcodedata.CurrentCell = opcodedata[0, opcodedata.CurrentRow.Index + 1];
                         }
                     }
                     else
                     {
-                        for (int i = 0; dataGridView2.Rows.Count > i; i++)
+                        for (int i = 0; bank0.Rows.Count > i; i++)
                         {
-                            if (dataGridView2[1, i].Value.ToString() == loc)
+                            if (bank0[1, i].Value.ToString() == loc)
                             {
                                 locrow = i;
                             }
                         }
                         if (locrow != 1234567)
                         {
-                            if (dataGridView2[2, locrow].Value.ToString().Substring(b, 1) == "1")
+                            if (bank0[2, locrow].Value.ToString().Substring(b, 1) == "1")
                             {
                                 befehlnr++;
                                 TimerWertbefehl++;
-                                dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.White;
-                                dataGridView1.CurrentCell = dataGridView1[0, dataGridView1.CurrentRow.Index + 1];
+                                opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.White;
+                                opcodedata.CurrentCell = opcodedata[0, opcodedata.CurrentRow.Index + 1];
                             }
                         }
                         else
                         {
-                            for (int i = 0; dataGridView3.Rows.Count > i; i++)
+                            for (int i = 0; bank1.Rows.Count > i; i++)
                             {
-                                if (dataGridView3[1, i].Value.ToString() == loc)
+                                if (bank1[1, i].Value.ToString() == loc)
                                 {
                                     locrow = i;
                                 }
                             }
                             if (locrow != 1234567)
                             {
-                                if (dataGridView3[2, locrow].Value.ToString().Substring(b, 1) == "1")
+                                if (bank1[2, locrow].Value.ToString().Substring(b, 1) == "1")
                                 {
                                     befehlnr++;
                                     TimerWertbefehl++;
-                                    dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.White;
-                                    dataGridView1.CurrentCell = dataGridView1[0, dataGridView1.CurrentRow.Index + 1];
+                                    opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.White;
+                                    opcodedata.CurrentCell = opcodedata[0, opcodedata.CurrentRow.Index + 1];
                                 }
                             }
                         }
@@ -1587,63 +1591,71 @@ namespace PIC_Simulator
                 default:
                     break;
             }
+
             clcktimer();
-            for(int i = 0;i<dataGridView4.RowCount;i++)
+            for(int i = 0; i<speicherzellen.RowCount;i++)
             {
-                if (dataGridView4[1,i].Value.ToString() == dataGridView2[1,2].Value.ToString())
+                if (speicherzellen[1,i].Value.ToString() == bank0[1,11].Value.ToString())
                 {
-                    dataGridView4[2, i].Value = dataGridView2[2, 2].Value.ToString();
+                    speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
                 }
             }
-
-            for (int i = 0; i < dataGridView4.RowCount; i++)
+            
+            //überschrieben der banken mit den werten der speicherzellen
+            for (int i = 0; i < speicherzellen.RowCount; i++)
             {
-                string locs = dataGridView4[1, i].Value.ToString();
-                for (int j = 0; j < dataGridView2.RowCount; j++)
+                string locs = speicherzellen[1, i].Value.ToString();
+                for (int j = 0; j < bank0.RowCount; j++)
                 {
-                    if (dataGridView2[1, j].Value.ToString() == locs)
+                    if (bank0[1, j].Value.ToString() == locs)
                     {
-                        dataGridView2[2, j].Value = dataGridView4[2, i].Value.ToString();
+                        bank0[2, j].Value = speicherzellen[2, i].Value.ToString();
+                    }
+                    if (bank1[1, j].Value.ToString() == locs)
+                    {
+                        bank1[2, j].Value = speicherzellen[2, i].Value.ToString();
                     }
                 }
             }
-            //set input/output
+
             setinputoutput();
 
             
-            if (rbie == 1)
+            //if (rbie == 1)
+            //{
+            //    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
+            //    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+            //}
+            //else
+            //{
+            //    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "0";
+            //    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+            //}
+
+            //interruptbit abhängig von portb
+            if (bank0[2,7].Value.ToString().Substring(0,1) == "1")
             {
-                dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 7) + "1";
-                dataGridView3[2, 11].Value = dataGridView2[2, 11].Value.ToString();
+                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 6) + "1" + bank0[2,11].Value.ToString().Substring(7);
+                bank1[2, 11].Value = bank0[2, 11].Value.ToString();
             }
             else
             {
-                dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 7) + "0";
-                dataGridView3[2, 11].Value = dataGridView2[2, 11].Value.ToString();
-            }
-            if (dataGridView2[2,7].Value.ToString().Substring(0,1) == "1")
-            {
-                dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 6) + "1" + dataGridView2[2,11].Value.ToString().Substring(7);
-                dataGridView3[2, 11].Value = dataGridView2[2, 11].Value.ToString();
-            }
-            else
-            {
-                dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 6) + "0" + dataGridView2[2, 11].Value.ToString().Substring(7);
-                dataGridView3[2, 11].Value = dataGridView2[2, 11].Value.ToString();
+                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 6) + "0" + bank0[2, 11].Value.ToString().Substring(7);
+                bank1[2, 11].Value = bank0[2, 11].Value.ToString();
             }
 
             //setze Status register
             setstatusreg();
 
-            for (int i = 0; i<dataGridView4.RowCount;i++)
+            for (int i = 0; i<speicherzellen.RowCount;i++)
             {
-                if(dataGridView4[1,i].Value.ToString() == dataGridView2[1,4].Value.ToString())
+                if(speicherzellen[1,i].Value.ToString() == bank0[1,4].Value.ToString())
                 {
-                    dataGridView4[2, i].Value = dataGridView2[2, 4].Value;
+                    speicherzellen[2, i].Value = bank0[2, 4].Value;
                 }
-                if (dataGridView4[1, i].Value.ToString() == dataGridView3[1, 4].Value.ToString())
+                if (speicherzellen[1, i].Value.ToString() == bank1[1, 4].Value.ToString())
                 {
-                    dataGridView4[2, i].Value = dataGridView3[2, 4].Value;
+                    speicherzellen[2, i].Value = bank1[2, 4].Value;
                 }
             }
             //Frage Bits im Interrupt Register ab
@@ -1652,13 +1664,14 @@ namespace PIC_Simulator
             return 1234567;
         }
 
+        //timer, der bei befehlsdurchlauf läuft
         private void clcktimer()
         {
-            String Prescaler_bits = dataGridView3[2, 2].Value.ToString().Substring(5, 1) + dataGridView3[2, 2].Value.ToString().Substring(6, 1) + dataGridView3[2, 2].Value.ToString().Substring(7, 1);
+            String Prescaler_bits = bank1[2, 2].Value.ToString().Substring(5, 1) + bank1[2, 2].Value.ToString().Substring(6, 1) + bank1[2, 2].Value.ToString().Substring(7, 1);
 
-            if (dataGridView3[2, 2].Value.ToString().Substring(2, 1) == "0")
+            if (bank1[2, 2].Value.ToString().Substring(2, 1) == "0")
             {
-                if (dataGridView3[2, 2].Value.ToString().Substring(4, 1) == "1")
+                if (bank1[2, 2].Value.ToString().Substring(4, 1) == "1")
                 {
 
                     switch (Prescaler_bits)
@@ -1667,10 +1680,11 @@ namespace PIC_Simulator
                             //1:1
                             if (TimerWertbefehl > 255)
                             {
+
                                 TimerWertbefehl = TimerWertbefehl - 256;
-                                dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                             }
-                            dataGridView2[2, 2].Value = dec2bin(TimerWertbefehl);
+                            bank0[2, 2].Value = dec2bin(TimerWertbefehl);
 
 
                             break;
@@ -1684,9 +1698,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1698,9 +1712,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1712,9 +1726,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1726,9 +1740,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1740,9 +1754,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1754,9 +1768,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1768,14 +1782,14 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
                     }
                 }//Wenn PSA BIT 0= Timer
-                else if (dataGridView3[2, 2].Value.ToString().Substring(4, 1) == "0")
+                else if (bank1[2, 2].Value.ToString().Substring(4, 1) == "0")
                 {
                     switch (Prescaler_bits)
                     {
@@ -1787,9 +1801,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1801,9 +1815,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1815,9 +1829,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1829,9 +1843,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1843,9 +1857,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1857,9 +1871,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1871,9 +1885,9 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
 
@@ -1885,38 +1899,47 @@ namespace PIC_Simulator
                                 if (Ausgabewert > 255)
                                 {
                                     Ausgabewert = 0;
-                                    dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
-                                dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
                             break;
                     }
                 }
             }
+            //wenn timer in speicherzellen vorhanden ist, wird der wert überschrieben
+            for (int i = 0; i < speicherzellen.RowCount; i++)
+            {
+                if (speicherzellen[1, i].Value.ToString() == bank0[1, 2].Value.ToString())
+                {
+                    speicherzellen[2, i].Value = bank0[2, 2].Value.ToString();
+                }
+            }
         }
 
+        //setzen der in/outputs
         private void setinputoutput()
         {
             int button;
 
             for (int i = 0; i < 8; i++)
             {
-                if (dataGridView3[2, 6].Value.ToString().Substring(i, 1) == "1")
+                if (bank1[2, 6].Value.ToString().Substring(i, 1) == "1")
                 {
                     button = i + 1;
                     inputoutput(button, true);
                 }
-                if (dataGridView3[2, 6].Value.ToString().Substring(i, 1) == "0")
+                if (bank1[2, 6].Value.ToString().Substring(i, 1) == "0")
                 {
                     button = i + 1;
                     inputoutput(button, false);
                 }
-                if (dataGridView3[2, 7].Value.ToString().Substring(i, 1) == "1")
+                if (bank1[2, 7].Value.ToString().Substring(i, 1) == "1")
                 {
                     button = i + 9;
                     inputoutput(button, true);
                 }
-                if (dataGridView3[2, 7].Value.ToString().Substring(i, 1) == "0")
+                if (bank1[2, 7].Value.ToString().Substring(i, 1) == "0")
                 {
                     button = i + 9;
                     inputoutput(button, false);
@@ -1924,731 +1947,500 @@ namespace PIC_Simulator
             }
         }
 
+        //interruptregister auf kombination testen, die einen interrupt auslöst
         private void testifinterrupt()
         {
-            if (dataGridView2[2, 11].Value.ToString().Substring(0, 1) == "1")
+            if (bank0[2, 11].Value.ToString().Substring(0, 1) == "1")
             {
-                if (dataGridView2[2, 11].Value.ToString().Substring(1, 1) == "1")
+                if (bank0[2, 11].Value.ToString().Substring(1, 1) == "1")
                 { interrupt(); }
-                if (dataGridView2[2, 11].Value.ToString().Substring(2, 1) == "1" && dataGridView2[2, 11].Value.ToString().Substring(5, 1) == "1")
+                if (bank0[2, 11].Value.ToString().Substring(2, 1) == "1" && bank0[2, 11].Value.ToString().Substring(5, 1) == "1")
                 { interrupt(); }
-                if (dataGridView2[2, 11].Value.ToString().Substring(3, 1) == "1" && dataGridView2[2, 11].Value.ToString().Substring(6, 1) == "1")
+                if (bank0[2, 11].Value.ToString().Substring(3, 1) == "1" && bank0[2, 11].Value.ToString().Substring(6, 1) == "1")
                 { interrupt(); }
-                if (dataGridView2[2, 11].Value.ToString().Substring(4, 1) == "1" && dataGridView2[2, 11].Value.ToString().Substring(7, 1) == "1")
+                if (bank0[2, 11].Value.ToString().Substring(4, 1) == "1" && bank0[2, 11].Value.ToString().Substring(7, 1) == "1")
                 { interrupt(); }
             }
         }
 
+        //statusregister setzen
         private void setstatusreg()
         {
-            if (digitcarry == 2 && zero != 2 && carry != 2) dataGridView2[2, 4].Value = dataGridView2[2, 4].Value.ToString().Substring(0, 3) + to + pd + zero + "x" + carry;
-            if (digitcarry != 2 && zero == 2 && carry != 2) dataGridView2[2, 4].Value = dataGridView2[2, 4].Value.ToString().Substring(0, 3) + to + pd + "x" + digitcarry + carry;
-            if (digitcarry != 2 && zero != 2 && carry == 2) dataGridView2[2, 4].Value = dataGridView2[2, 4].Value.ToString().Substring(0, 3) + to + pd + zero + digitcarry + "x";
-            if (digitcarry == 2 && zero == 2 && carry != 2) dataGridView2[2, 4].Value = dataGridView2[2, 4].Value.ToString().Substring(0, 3) + to + pd + "x" + "x" + carry;
-            if (digitcarry == 2 && zero != 2 && carry == 2) dataGridView2[2, 4].Value = dataGridView2[2, 4].Value.ToString().Substring(0, 3) + to + pd + zero + "x" + "x";
-            if (digitcarry != 2 && zero == 2 && carry == 2) dataGridView2[2, 4].Value = dataGridView2[2, 4].Value.ToString().Substring(0, 3) + to + pd + "x" + digitcarry + "x";
-            if (digitcarry == 2 && zero == 2 && carry == 2) dataGridView2[2, 4].Value = dataGridView2[2, 4].Value.ToString().Substring(0, 3) + to + pd + "x" + "x" + "x";
-            if (digitcarry != 2 && zero != 2 && carry != 2) dataGridView2[2, 4].Value = dataGridView2[2, 4].Value.ToString().Substring(0, 3) + to + pd + zero + digitcarry + carry;
-            dataGridView3[2, 4].Value = dataGridView2[2, 4].Value.ToString();
+            if (digitcarry == 2 && zero != 2 && carry != 2) bank0[2, 4].Value = bank0[2, 4].Value.ToString().Substring(0, 3) + to + pd + zero + "x" + carry;
+            if (digitcarry != 2 && zero == 2 && carry != 2) bank0[2, 4].Value = bank0[2, 4].Value.ToString().Substring(0, 3) + to + pd + "x" + digitcarry + carry;
+            if (digitcarry != 2 && zero != 2 && carry == 2) bank0[2, 4].Value = bank0[2, 4].Value.ToString().Substring(0, 3) + to + pd + zero + digitcarry + "x";
+            if (digitcarry == 2 && zero == 2 && carry != 2) bank0[2, 4].Value = bank0[2, 4].Value.ToString().Substring(0, 3) + to + pd + "x" + "x" + carry;
+            if (digitcarry == 2 && zero != 2 && carry == 2) bank0[2, 4].Value = bank0[2, 4].Value.ToString().Substring(0, 3) + to + pd + zero + "x" + "x";
+            if (digitcarry != 2 && zero == 2 && carry == 2) bank0[2, 4].Value = bank0[2, 4].Value.ToString().Substring(0, 3) + to + pd + "x" + digitcarry + "x";
+            if (digitcarry == 2 && zero == 2 && carry == 2) bank0[2, 4].Value = bank0[2, 4].Value.ToString().Substring(0, 3) + to + pd + "x" + "x" + "x";
+            if (digitcarry != 2 && zero != 2 && carry != 2) bank0[2, 4].Value = bank0[2, 4].Value.ToString().Substring(0, 3) + to + pd + zero + digitcarry + carry;
+            bank1[2, 4].Value = bank0[2, 4].Value.ToString();
         }
 
+        //input aus ports in register schreiben
         private void inputporta()
         {
-            if (port1_7.Visible == true)
+            if (port3_7.BackColor == Color.SteelBlue)
             {
-                if (port1_7.BackColor == Color.Firebrick) dataGridView2[2, 6].Value = "1" + dataGridView2[2, 6].Value.ToString().Substring(1);
-                if (port1_7.BackColor == Color.Transparent) dataGridView2[2, 6].Value = "0" + dataGridView2[2, 6].Value.ToString().Substring(1);
-                if (port1_7.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 6].Value.ToString().Substring(0, 1) == "0") dataGridView2[2, 6].Value = "1" + dataGridView2[2, 6].Value.ToString().Substring(1);
-                    else dataGridView2[2, 6].Value = "0" + dataGridView2[2, 6].Value.ToString().Substring(1);
-                }
+                if (bank0[2, 6].Value.ToString().Substring(0, 1) == "0") bank0[2, 6].Value = "1" + bank0[2, 6].Value.ToString().Substring(1);
+                else bank0[2, 6].Value = "0" + bank0[2, 6].Value.ToString().Substring(1);
             }
-            if (port1_6.Visible == true)
+            else
             {
-                if (port1_6.BackColor == Color.Firebrick) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 1) + "1" + dataGridView2[2, 6].Value.ToString().Substring(2);
-                if (port1_6.BackColor == Color.Transparent) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 1) + "0" + dataGridView2[2, 6].Value.ToString().Substring(2);
-                if (port1_6.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 6].Value.ToString().Substring(1, 1) == "0") dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 1) + "1" + dataGridView2[2, 6].Value.ToString().Substring(2);
-                    else dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 1) + "0" + dataGridView2[2, 6].Value.ToString().Substring(2);
-                }
+                if (bank0[2, 6].Value.ToString() == "1" + bank0[2, 6].Value.ToString().Substring(1)) port3_7.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == "0" + bank0[2, 6].Value.ToString().Substring(1)) port3_7.BackColor = Color.Transparent;
             }
-            if (port1_5.Visible == true)
-            {
-                if (port1_5.BackColor == Color.Firebrick) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 2) + "1" + dataGridView2[2, 6].Value.ToString().Substring(3);
-                if (port1_5.BackColor == Color.Transparent) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 2) + "0" + dataGridView2[2, 6].Value.ToString().Substring(3);
-                if (port1_5.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 6].Value.ToString().Substring(2, 1) == "0") dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 2) + "1" + dataGridView2[2, 6].Value.ToString().Substring(3);
-                    else dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 2) + "0" + dataGridView2[2, 6].Value.ToString().Substring(3);
-                }
-            }
-            if (port1_4.Visible == true)
-            {
-                if (port1_4.BackColor == Color.Firebrick) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 3) + "1" + dataGridView2[2, 6].Value.ToString().Substring(4);
-                if (port1_4.BackColor == Color.Transparent) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 3) + "0" + dataGridView2[2, 6].Value.ToString().Substring(4);
-                if (port1_4.BackColor == Color.SteelBlue)
-                {
-                    //Taktgenerator PortA
-                    if (dataGridView2[2, 6].Value.ToString().Substring(3, 1) == "0")
-                        dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 3) + "1" + dataGridView2[2, 6].Value.ToString().Substring(4);
-                    else
-                        dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 3) + "0" + dataGridView2[2, 6].Value.ToString().Substring(4);
 
-                    //PS2:PS0 Bits werden als String zusammengefasst und in Switch Case geprüft
-                    String Prescaler_bits = dataGridView3[2, 2].Value.ToString().Substring(5, 1) + dataGridView3[2, 2].Value.ToString().Substring(6, 1) + dataGridView3[2, 2].Value.ToString().Substring(7, 1);
-                    int WDT_rate;
-                    int TMR0_rate;
+            if (port3_6.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 6].Value.ToString().Substring(1, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 1) + "1" + bank0[2, 6].Value.ToString().Substring(2);
+                else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 1) + "0" + bank0[2, 6].Value.ToString().Substring(2);
+            }
+            else
+            {
+                if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 1) + "1" + bank0[2, 6].Value.ToString().Substring(2)) port3_6.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 1) + "0" + bank0[2, 6].Value.ToString().Substring(2)) port3_6.BackColor = Color.Transparent ;
+            }
+            if (port3_5.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 6].Value.ToString().Substring(2, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 2) + "1" + bank0[2, 6].Value.ToString().Substring(3);
+                else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 2) + "0" + bank0[2, 6].Value.ToString().Substring(3);
+            }
+            else
+            {
+                if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 2) + "1" + bank0[2, 6].Value.ToString().Substring(3)) port3_5.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 2) + "0" + bank0[2, 6].Value.ToString().Substring(3)) port3_5.BackColor = Color.Transparent;
+            }
+            if (port3_4.BackColor == Color.SteelBlue)
+            {
+                //Taktgenerator PortA
+                if (bank0[2, 6].Value.ToString().Substring(3, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 3) + "1" + bank0[2, 6].Value.ToString().Substring(4);
+                else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 3) + "0" + bank0[2, 6].Value.ToString().Substring(4);
 
-                    //Prüfen ob PSA Bit 1--> WDT oder 0--> TMR0 ist
-                    if (dataGridView3[2, 2].Value.ToString().Substring(2, 1) == "1")
+                //PS2:PS0 Bits werden als String zusammengefasst und in Switch Case geprüft
+                String Prescaler_bits = bank1[2, 2].Value.ToString().Substring(5, 1) + bank1[2, 2].Value.ToString().Substring(6, 1) + bank1[2, 2].Value.ToString().Substring(7, 1);
+
+                //Prüfen ob PSA Bit 1--> WDT oder 0--> TMR0 ist
+                if (bank1[2, 2].Value.ToString().Substring(2, 1) == "1")
+                {
+                    if (bank1[2, 2].Value.ToString().Substring(4, 1) == "1")
                     {
-                        if (dataGridView3[2, 2].Value.ToString().Substring(4, 1) == "1")
+
+                        switch (Prescaler_bits)
                         {
+                            case "000":
+                                //1:1
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert > 255)
+                                {
+                                    TimerWert = 0;
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                }
+                                bank0[2, 2].Value = dec2bin(TimerWert);
 
-                            switch (Prescaler_bits)
-                            {
-                                case "000":
-                                    //1:1
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert > 255)
+
+                                break;
+
+                            case "001":
+                                //1:2
+                                TimerWert = TimerWert + 1;
+
+                                if (TimerWert % 2 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        TimerWert = 0;
-                                        dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    dataGridView2[2, 2].Value = dec2bin(TimerWert);
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-
-                                    break;
-
-                                case "001":
-                                    //1:2
-                                    TimerWert = TimerWert + 1;
-
-                                    if (TimerWert % 2 == 0)
+                            case "010":
+                                //1:4
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 4 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "010":
-                                    //1:4
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 4 == 0)
+                            case "011":
+                                //1:8
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 8 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "011":
-                                    //1:8
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 8 == 0)
+                            case "100":
+                                //1:16
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 16 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "100":
-                                    //1:16
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 16 == 0)
+                            case "101":
+                                //1:32
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 32 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "101":
-                                    //1:32
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 32 == 0)
+                            case "110":
+                                //1:64
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 64 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "110":
-                                    //1:64
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 64 == 0)
+                            case "111":
+                                //1:128
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 128 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
-
-                                case "111":
-                                    //1:128
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 128 == 0)
-                                    {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
-                                    }
-                                    break;
-                            }
-                        }//Wenn PSA BIT 0= Timer
-                        else if (dataGridView3[2, 2].Value.ToString().Substring(4, 1) == "0")
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
+                        }
+                    }//Wenn PSA BIT 0= Timer
+                    else if (bank1[2, 2].Value.ToString().Substring(4, 1) == "0")
+                    {
+                        switch (Prescaler_bits)
                         {
-                            switch (Prescaler_bits)
-                            {
-                                case "000":
-                                    //1:2
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 2 == 0)
+                            case "000":
+                                //1:2
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 2 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "001":
-                                    //1:4
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 4 == 0)
+                            case "001":
+                                //1:4
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 4 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "010":
-                                    //1:8
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 8 == 0)
+                            case "010":
+                                //1:8
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 8 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "011":
-                                    //1:16
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 16 == 0)
+                            case "011":
+                                //1:16
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 16 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "100":
-                                    //1:32
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 32 == 0)
+                            case "100":
+                                //1:32
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 32 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "101":
-                                    //1:64
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 64 == 0)
+                            case "101":
+                                //1:64
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 64 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "110":
-                                    //1:128
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 128 == 0)
+                            case "110":
+                                //1:128
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 128 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
 
-                                case "111":
-                                    //1:256
-                                    TimerWert = TimerWert + 1;
-                                    if (TimerWert % 256 == 0)
+                            case "111":
+                                //1:256
+                                TimerWert = TimerWert + 1;
+                                if (TimerWert % 256 == 0)
+                                {
+                                    Ausgabewert = Ausgabewert + 1;
+                                    if (Ausgabewert > 255)
                                     {
-                                        Ausgabewert = Ausgabewert + 1;
-                                        if (Ausgabewert > 255)
-                                        {
-                                            Ausgabewert = 0;
-                                            dataGridView2[2, 11].Value = dataGridView2[2, 11].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 11].Value.ToString().Substring(6);
-                                        }
-                                        dataGridView2[2, 2].Value = dec2bin(Ausgabewert);
+                                        Ausgabewert = 0;
+                                        bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                     }
-                                    break;
-                            }
+                                    bank0[2, 2].Value = dec2bin(Ausgabewert);
+                                }
+                                break;
                         }
                     }
                 }
+            }
 
-              
+            else {
+                if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 3) + "1" + bank0[2, 6].Value.ToString().Substring(4)) port3_4.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 3) + "0" + bank0[2, 6].Value.ToString().Substring(4)) port3_4.BackColor = Color.Transparent;
+            }
+                if (port3_3.BackColor == Color.SteelBlue)
+                {
+                    if (bank0[2, 6].Value.ToString().Substring(4, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 4) + "1" + bank0[2, 6].Value.ToString().Substring(5);
+                    else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 4) + "0" + bank0[2, 6].Value.ToString().Substring(5);
+                }
+                else {
+                    if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 4) + "1" + bank0[2, 6].Value.ToString().Substring(5)) port3_3.BackColor = Color.Firebrick;
+                    if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 4) + "0" + bank0[2, 6].Value.ToString().Substring(5)) port3_3.BackColor = Color.Transparent;
+                }
+                if (port3_2.BackColor == Color.SteelBlue)
+                {
+                    if (bank0[2, 6].Value.ToString().Substring(5, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 5) + "1" + bank0[2, 6].Value.ToString().Substring(6);
+                    else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 5) + "0" + bank0[2, 6].Value.ToString().Substring(6);
+                }
+                else {
+                    if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 5) + "1" + bank0[2, 6].Value.ToString().Substring(6)) port3_2.BackColor = Color.Firebrick;
+                    if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 5) + "0" + bank0[2, 6].Value.ToString().Substring(6)) port3_2.BackColor = Color.Transparent ;
+                }
+                if (port3_1.BackColor == Color.SteelBlue)
+                {
+                    if (bank0[2, 6].Value.ToString().Substring(6, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 6) + "1" + bank0[2, 6].Value.ToString().Substring(7);
+                    else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 6) + "0" + bank0[2, 6].Value.ToString().Substring(7);
+                }
+                else {
+                    if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 6) + "1" + bank0[2, 6].Value.ToString().Substring(7)) port3_1.BackColor = Color.Firebrick ;
+                    if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 6) + "0" + bank0[2, 6].Value.ToString().Substring(7)) port3_1.BackColor = Color.Transparent ;
+                }
+                if (port3_0.BackColor == Color.SteelBlue)
+                {
+                    if (bank0[2, 6].Value.ToString().Substring(7, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 7) + "1";
+                    else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 7) + "0";
+                }
+                else { 
+                if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 7) + "1") port3_0.BackColor = Color.Firebrick ;
+                if (bank0[2, 6].Value.ToString() == bank0[2, 6].Value.ToString().Substring(0, 7) + "0") port3_0.BackColor = Color.Transparent;
+                }
+                
 
-                if (port1_3.Visible == true)
-                {
-                    if (port1_3.BackColor == Color.Firebrick) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 4) + "1" + dataGridView2[2, 6].Value.ToString().Substring(5);
-                    if (port1_3.BackColor == Color.Transparent) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 4) + "0" + dataGridView2[2, 6].Value.ToString().Substring(5);
-                    if (port1_3.BackColor == Color.SteelBlue)
-                    {
-                        if (dataGridView2[2, 6].Value.ToString().Substring(4, 1) == "0") dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 4) + "1" + dataGridView2[2, 6].Value.ToString().Substring(5);
-                        else dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 4) + "0" + dataGridView2[2, 6].Value.ToString().Substring(5);
-                    }
-                }
-                if (port1_2.Visible == true)
-                {
-                    if (port1_2.BackColor == Color.Firebrick) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 6].Value.ToString().Substring(6);
-                    if (port1_2.BackColor == Color.Transparent) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 5) + "0" + dataGridView2[2, 6].Value.ToString().Substring(6);
-                    if (port1_2.BackColor == Color.SteelBlue)
-                    {
-                        if (dataGridView2[2, 6].Value.ToString().Substring(5, 1) == "0") dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 6].Value.ToString().Substring(6);
-                        else dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 5) + "0" + dataGridView2[2, 6].Value.ToString().Substring(6);
-                    }
-                }
-                if (port1_1.Visible == true)
-                {
-                    if (port1_1.BackColor == Color.Firebrick) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 6) + "1" + dataGridView2[2, 6].Value.ToString().Substring(7);
-                    if (port1_1.BackColor == Color.Transparent) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 6) + "0" + dataGridView2[2, 6].Value.ToString().Substring(7);
-                    if (port1_1.BackColor == Color.SteelBlue)
-                    {
-                        if (dataGridView2[2, 6].Value.ToString().Substring(6, 1) == "0") dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 6) + "1" + dataGridView2[2, 6].Value.ToString().Substring(7);
-                        else dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 6) + "0" + dataGridView2[2, 6].Value.ToString().Substring(7);
-                    }
-                }
-                if (port1_0.Visible == true)
-                {
-                    if (port1_0.BackColor == Color.Firebrick) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 7) + "1";
-                    if (port1_0.BackColor == Color.Transparent) dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 7) + "0";
-                    if (port1_0.BackColor == Color.SteelBlue)
-                    {
-                        if (dataGridView2[2, 6].Value.ToString().Substring(7, 1) == "0") dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 7) + "1";
-                        else dataGridView2[2, 6].Value = dataGridView2[2, 6].Value.ToString().Substring(0, 7) + "0";
-                    }
-                }
 
-                for (int j = 0; j < dataGridView4.RowCount; j++)
+                for (int j = 0; j < speicherzellen.RowCount; j++)
                 {
-                    if (dataGridView4[1, j].Value.ToString() == dataGridView2[1, 6].Value.ToString())
+                    if (speicherzellen[1, j].Value.ToString() == bank0[1, 6].Value.ToString())
                     {
-                        dataGridView4[2, j].Value = dataGridView2[2, 6].Value.ToString();
+                        speicherzellen[2, j].Value = bank0[2, 6].Value.ToString();
                     }
                 }
 
             }
-        }
+        
 
+        //input aus ports in register schreiben
         private void inputportb()
         {
-            if (port2_7.Visible == true)
+            if (port4_7.BackColor == Color.SteelBlue)
             {
-                if (port2_7.BackColor == Color.Firebrick) dataGridView2[2, 7].Value = "1" + dataGridView2[2, 7].Value.ToString().Substring(1);
-                if (port2_7.BackColor == Color.Transparent) dataGridView2[2, 7].Value = "0" + dataGridView2[2, 7].Value.ToString().Substring(1);
-                if (port2_7.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 7].Value.ToString().Substring(0, 1) == "0") dataGridView2[2, 7].Value = "1" + dataGridView2[2, 7].Value.ToString().Substring(1);
-                    else dataGridView2[2, 7].Value = "0" + dataGridView2[2, 7].Value.ToString().Substring(1);
-                }
+                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
+                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
             }
-            if (port2_6.Visible == true)
+            else {
+                if (bank0[2, 7].Value.ToString() == "1" + bank0[2, 7].Value.ToString().Substring(1)) port4_7.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == "0" + bank0[2, 7].Value.ToString().Substring(1)) port4_7.BackColor = Color.Transparent;
+            }
+           if (port4_6.BackColor == Color.SteelBlue)
+                {
+                    if (bank0[2, 7].Value.ToString().Substring(1, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 1) + "1" + bank0[2, 7].Value.ToString().Substring(2);
+                    else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 1) + "0" + bank0[2, 7].Value.ToString().Substring(2);
+                }
+            else
             {
-                if (port2_6.BackColor == Color.Firebrick) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 1) + "1" + dataGridView2[2, 7].Value.ToString().Substring(2);
-                if (port2_6.BackColor == Color.Transparent) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 1) + "0" + dataGridView2[2, 7].Value.ToString().Substring(2);
-                if (port2_6.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 7].Value.ToString().Substring(1, 1) == "0") dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 1) + "1" + dataGridView2[2, 7].Value.ToString().Substring(2);
-                    else dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 1) + "0" + dataGridView2[2, 7].Value.ToString().Substring(2);
-                }
-            }
-            if (port2_5.Visible == true)
+
+            
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 1) + "1" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Firebrick ;
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 1) + "0" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Transparent;
+             }
+            if (port4_5.BackColor == Color.SteelBlue)
             {
-                if (port2_5.BackColor == Color.Firebrick) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 2) + "1" + dataGridView2[2, 7].Value.ToString().Substring(3);
-                if (port2_5.BackColor == Color.Transparent) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 2) + "0" + dataGridView2[2, 7].Value.ToString().Substring(3);
-                if (port2_5.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 7].Value.ToString().Substring(2, 1) == "0") dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 2) + "1" + dataGridView2[2, 7].Value.ToString().Substring(3);
-                    else dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 2) + "0" + dataGridView2[2, 7].Value.ToString().Substring(3);
-                }
+                if (bank0[2, 7].Value.ToString().Substring(2, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 2) + "1" + bank0[2, 7].Value.ToString().Substring(3);
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 2) + "0" + bank0[2, 7].Value.ToString().Substring(3);
+                
             }
-            if (port2_4.Visible == true)
+            else {
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 2) + "1" + bank0[2, 7].Value.ToString().Substring(3)) port4_5.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 2) + "0" + bank0[2, 7].Value.ToString().Substring(3)) port4_5.BackColor = Color.Transparent;
+            }
+            if (port4_4.BackColor == Color.SteelBlue)
             {
-                if (port2_4.BackColor == Color.Firebrick) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 3) + "1" + dataGridView2[2, 7].Value.ToString().Substring(4);
-                if (port2_4.BackColor == Color.Transparent) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 3) + "0" + dataGridView2[2, 7].Value.ToString().Substring(4);
-                if (port2_4.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 7].Value.ToString().Substring(3, 1) == "0") dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 3) + "1" + dataGridView2[2, 7].Value.ToString().Substring(4);
-                    else dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 3) + "0" + dataGridView2[2, 7].Value.ToString().Substring(4);
-                }
+                if (bank0[2, 7].Value.ToString().Substring(3, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 3) + "1" + bank0[2, 7].Value.ToString().Substring(4);
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 3) + "0" + bank0[2, 7].Value.ToString().Substring(4);
             }
-            if (port2_3.Visible == true)
+            else {
+                if (bank0[2, 7].ToString() == bank0[2, 7].Value.ToString().Substring(0, 3) + "1" + bank0[2, 7].Value.ToString().Substring(4)) port4_4.BackColor = Color.Firebrick ;
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 3) + "0" + bank0[2, 7].Value.ToString().Substring(4)) port4_4.BackColor = Color.Transparent;
+            }
+            if (port4_3.BackColor == Color.SteelBlue)
             {
-                if (port2_3.BackColor == Color.Firebrick) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 4) + "1" + dataGridView2[2, 7].Value.ToString().Substring(5);
-                if (port2_3.BackColor == Color.Transparent) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 4) + "0" + dataGridView2[2, 7].Value.ToString().Substring(5);
-                if (port2_3.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 7].Value.ToString().Substring(4, 1) == "0") dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 4) + "1" + dataGridView2[2, 7].Value.ToString().Substring(5);
-                    else dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 4) + "0" + dataGridView2[2, 7].Value.ToString().Substring(5);
-                }
+                if (bank0[2, 7].Value.ToString().Substring(4, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 4) + "1" + bank0[2, 7].Value.ToString().Substring(5);
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 4) + "0" + bank0[2, 7].Value.ToString().Substring(5);
             }
-            if (port2_2.Visible == true)
+            else {
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 4) + "1" + bank0[2, 7].Value.ToString().Substring(5)) port4_3.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 4) + "0" + bank0[2, 7].Value.ToString().Substring(5)) port4_3.BackColor = Color.Transparent;
+            }
+            if (port4_2.BackColor == Color.SteelBlue)
             {
-                if (port2_2.BackColor == Color.Firebrick) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 7].Value.ToString().Substring(6);
-                if (port2_2.BackColor == Color.Transparent) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 5) + "0" + dataGridView2[2, 7].Value.ToString().Substring(6);
-                if (port2_2.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 7].Value.ToString().Substring(5, 1) == "0") dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 5) + "1" + dataGridView2[2, 7].Value.ToString().Substring(6);
-                    else dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 5) + "0" + dataGridView2[2, 7].Value.ToString().Substring(6);
-                }
+                if (bank0[2, 7].Value.ToString().Substring(5, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 5) + "1" + bank0[2, 7].Value.ToString().Substring(6);
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 5) + "0" + bank0[2, 7].Value.ToString().Substring(6);
             }
-            if (port2_1.Visible == true)
+            else {
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 5) + "1" + bank0[2, 7].Value.ToString().Substring(6)) port4_2.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 5) + "0" + bank0[2, 7].Value.ToString().Substring(6)) port4_2.BackColor = Color.Transparent ;
+            }
+            if (port4_1.BackColor == Color.SteelBlue)
             {
-                if (port2_1.BackColor == Color.Firebrick) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 6) + "1" + dataGridView2[2, 7].Value.ToString().Substring(7);
-                if (port2_1.BackColor == Color.Transparent) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 6) + "0" + dataGridView2[2, 7].Value.ToString().Substring(7);
-                if (port2_1.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 7].Value.ToString().Substring(6, 1) == "0") dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 6) + "1" + dataGridView2[2, 7].Value.ToString().Substring(7);
-                    else dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 6) + "0" + dataGridView2[2, 7].Value.ToString().Substring(7);
-                }
+                if (bank0[2, 7].Value.ToString().Substring(6, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 6) + "1" + bank0[2, 7].Value.ToString().Substring(7);
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 6) + "0" + bank0[2, 7].Value.ToString().Substring(7);
             }
-            if (port2_0.Visible == true)
+            else {
+                if (bank0[2, 7].Value.ToString()== bank0[2, 7].Value.ToString().Substring(0, 6) + "1" + bank0[2, 7].Value.ToString().Substring(7)) port4_1.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString()== bank0[2, 7].Value.ToString().Substring(0, 6) + "0" + bank0[2, 7].Value.ToString().Substring(7)) port4_1.BackColor = Color.Transparent;
+            }
+            if (port4_0.BackColor == Color.SteelBlue)
             {
-                if (port2_0.BackColor == Color.Firebrick) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 7) + "1";
-                if (port2_0.BackColor == Color.Transparent) dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 7) + "0";
-                if (port2_0.BackColor == Color.SteelBlue)
-                {
-                    if (dataGridView2[2, 7].Value.ToString().Substring(7, 1) == "0") dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 7) + "1";
-                    else dataGridView2[2, 7].Value = dataGridView2[2, 7].Value.ToString().Substring(0, 7) + "0";
-                }
+                if (bank0[2, 7].Value.ToString().Substring(7, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 7) + "1";
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 7) + "0";
             }
-            for (int j = 0; j < dataGridView4.RowCount; j++)
-            {
-                if (dataGridView4[1, j].Value.ToString() == dataGridView2[1, 7].Value.ToString())
-                {
-                    dataGridView4[2, j].Value = dataGridView2[2, 7].Value.ToString();
-                }
+            else {
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 7) + "1") port4_0.BackColor = Color.Firebrick ;
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 7) + "0") port4_0.BackColor = Color.Transparent;
             }
+            
+                if (speicherzellen[1, j].Value.ToString() == bank0[1, 7].Value.ToString())
+                {
+                    speicherzellen[2, j].Value = bank0[2, 7].Value.ToString();
+                }
+            
 
         }
 
+        //setzen der input/outputs
         private void inputoutput(int button, bool inout)
         {
-            switch (button)
-            {
-                case 1:
-                    if (inout == true)
-                    {
-                        port1_7.Visible = true;
-                        port3_7.Visible = false;
-                    }
-                    else
-                    {
-                        port1_7.Visible = false;
-                        port3_7.Visible = true;
-
-                    }
-                    break;
-
-                case 2:
-                    if (inout == true)
-                    {
-                        port1_6.Visible = true;
-                        port3_6.Visible = false;
-                    }
-                    else
-                    {
-                        port1_6.Visible = false;
-                        port3_6.Visible = true;
-
-                    }
-                    break;
-
-                case 3:
-                    if (inout == true)
-                    {
-                        port1_5.Visible = true;
-                        port3_5.Visible = false;
-                    }
-                    else
-                    {
-                        port1_5.Visible = false;
-                        port3_5.Visible = true;
-
-                    }
-                    break;
-
-                case 4:
-                    if (inout == true)
-                    {
-                        port1_4.Visible = true;
-                        port3_4.Visible = false;
-                    }
-                    else
-                    {
-                        port1_4.Visible = false;
-                        port3_4.Visible = true;
-
-                    }
-                    break;
-
-                case 5:
-                    if (inout == true)
-                    {
-                        port1_3.Visible = true;
-                        port3_3.Visible = false;
-                    }
-                    else
-                    {
-                        port1_3.Visible = false;
-                        port3_3.Visible = true;
-
-                    }
-                    break;
-
-                case 6:
-                    if (inout == true)
-                    {
-                        port1_2.Visible = true;
-                        port3_2.Visible = false;
-                    }
-                    else
-                    {
-                        port1_2.Visible = false;
-                        port3_2.Visible = true;
-
-                    }
-                    break;
-
-                case 7:
-                    if (inout == true)
-                    {
-                        port1_1.Visible = true;
-                        port3_1.Visible = false;
-                    }
-                    else
-                    {
-                        port1_1.Visible = false;
-                        port3_1.Visible = true;
-
-                    }
-                    break;
-
-                case 8:
-                    if (inout == true)
-                    {
-                        port1_0.Visible = true;
-                        port3_0.Visible = false;
-                    }
-                    else
-                    {
-                        port1_0.Visible = false;
-                        port3_0.Visible = true;
-
-                    }
-                    break;
-
-                case 9:
-                    if (inout == true)
-                    {
-                        port2_7.Visible = true;
-                        port4_7.Visible = false;
-                    }
-                    else
-                    {
-                        port2_7.Visible = false;
-                        port4_7.Visible = true;
-
-                    }
-                    break;
-
-                case 10:
-                    if (inout == true)
-                    {
-                        port2_6.Visible = true;
-                        port4_6.Visible = false;
-                    }
-                    else
-                    {
-                        port2_6.Visible = false;
-                        port4_6.Visible = true;
-
-                    }
-                    break;
-
-                case 11:
-                    if (inout == true)
-                    {
-                        port2_5.Visible = true;
-                        port4_5.Visible = false;
-                    }
-                    else
-                    {
-                        port2_5.Visible = false;
-                        port4_5.Visible = true;
-
-                    }
-                    break;
-
-                case 12:
-                    if (inout == true)
-                    {
-                        port2_4.Visible = true;
-                        port4_4.Visible = false;
-                    }
-                    else
-                    {
-                        port2_4.Visible = false;
-                        port4_4.Visible = true;
-
-                    }
-                    break;
-
-                case 13:
-                    if (inout == true)
-                    {
-                        port2_3.Visible = true;
-                        port4_3.Visible = false;
-                    }
-                    else
-                    {
-                        port2_3.Visible = false;
-                        port4_3.Visible = true;
-
-                    }
-                    break;
-
-                case 14:
-                    if (inout == true)
-                    {
-                        port2_2.Visible = true;
-                        port4_2.Visible = false;
-                    }
-                    else
-                    {
-                        port2_2.Visible = false;
-                        port4_2.Visible = true;
-
-                    }
-                    break;
-
-                case 15:
-                    if (inout == true)
-                    {
-                        port2_1.Visible = true;
-                        port4_1.Visible = false;
-                    }
-                    else
-                    {
-                        port2_1.Visible = false;
-                        port4_1.Visible = true;
-
-                    }
-                    break;
-
-                case 16:
-                    if (inout == true)
-                    {
-                        port2_0.Visible = true;
-                        port4_0.Visible = false;
-                    }
-                    else
-                    {
-                        port2_0.Visible = false;
-                        port4_0.Visible = true;
-
-                    }
-                    break;
-
-            }
+          
 
         }
 
+        //inetrrupt-methode
         public async void interrupt()
         {
             btn_interrupt.Enabled = true;
             
             
             await Task.Delay(5000);
-            for (int i = 0; dataGridView1.Rows.Count> i;i++)
+            for (int i = 0; opcodedata.Rows.Count> i;i++)
             {
-                if (dataGridView1[1, i].Value.ToString() == "0004")
-                    dataGridView1.CurrentCell = dataGridView1[1, i];
+                if (opcodedata[1, i].Value.ToString() == "0004")
+                    opcodedata.CurrentCell = opcodedata[1, i];
             }
             btn_interrupt.Enabled = false;  
         }
         
+        //aus dem opcode den befehl ausleden, welcher durchgeführt werden muss
         private int readopcode(string binarystring)
         {
             
@@ -2800,82 +2592,159 @@ namespace PIC_Simulator
             return 1234567;
         }
 
+        //ausführen eines befehls nach klick des step buttons
         private void stepbtn_Click_1(object sender, EventArgs e)
         {
-            timer2.Interval = taktb;
-            timer1.Interval = takta;
-            timer2.Start();
-            timer1.Start();
-            timer3.Interval = 200;
-            timer3.Start();
 
-            if (dataGridView1.CurrentRow.DefaultCellStyle.BackColor == Color.White || dataGridView1.CurrentRow.DefaultCellStyle.BackColor == Color.LightGray) colorset = dataGridView1.CurrentRow.DefaultCellStyle.BackColor;
-            string opcode = dataGridView1.CurrentRow.Cells[2].Value.ToString();
-            string opstring = dataGridView1.CurrentRow.Cells[3].Value.ToString();
-            int row = dataGridView1.CurrentRow.Index;
+            timer_freq.Interval = 200;
+            timer_freq.Start();
+
+            if (opcodedata.CurrentRow.DefaultCellStyle.BackColor == Color.White || opcodedata.CurrentRow.DefaultCellStyle.BackColor == Color.LightGray) colorset = opcodedata.CurrentRow.DefaultCellStyle.BackColor;
+            string opcode = opcodedata.CurrentRow.Cells[2].Value.ToString();
+            string opstring = opcodedata.CurrentRow.Cells[3].Value.ToString();
+            int row = opcodedata.CurrentRow.Index;
             int retvalue = dooperator(opcode, opstring, row);
             
 
 
             if (retvalue != 1234567)
             {
-                dataGridView1.Rows[dataGridView1.CurrentRow.Index].DefaultCellStyle.BackColor = colorset;
-                dataGridView1.CurrentCell = dataGridView1[1, retvalue];
+                opcodedata.Rows[opcodedata.CurrentRow.Index].DefaultCellStyle.BackColor = colorset;
+                opcodedata.CurrentCell = opcodedata[1, retvalue];
 
-                if (dataGridView1.CurrentRow.DefaultCellStyle.BackColor != Color.Salmon) colorset = dataGridView1.CurrentRow.DefaultCellStyle.BackColor;
-                dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
+                if (opcodedata.CurrentRow.DefaultCellStyle.BackColor != Color.Salmon) colorset = opcodedata.CurrentRow.DefaultCellStyle.BackColor;
+                opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
             }
             else
             {
-                dataGridView1.Rows[dataGridView1.CurrentRow.Index].DefaultCellStyle.BackColor = colorset;
-                dataGridView1.CurrentCell = dataGridView1[1, dataGridView1.CurrentRow.Index + 1];
+                opcodedata.Rows[opcodedata.CurrentRow.Index].DefaultCellStyle.BackColor = colorset;
+                opcodedata.CurrentCell = opcodedata[1, opcodedata.CurrentRow.Index + 1];
                 
-            if (dataGridView1.CurrentRow.DefaultCellStyle.BackColor != Color.Salmon) colorset = dataGridView1.CurrentRow.DefaultCellStyle.BackColor;
-                dataGridView1.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
+            if (opcodedata.CurrentRow.DefaultCellStyle.BackColor != Color.Salmon) colorset = opcodedata.CurrentRow.DefaultCellStyle.BackColor;
+                opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
             }
             
         }
 
+        //umrechner von binär zu hexadezimal
         public static string BinaryStringToHexString(string binary)
         {
-            StringBuilder result = new StringBuilder(binary.Length / 8 + 1);
-
-            // TODO: check all 1's or 0's... Will throw otherwise
-
-            int mod4Len = binary.Length % 8;
-            if (mod4Len != 0)
+            while (binary.Length > 8) binary = binary.Substring(1);
+            while (binary.Length < 8) binary = "0" + binary;
+            string resultstring = "";
+            string binlow = binary.Substring(4);
+            string binhigh = binary.Substring(0, 4);
+            switch (binlow)
             {
-                // pad to length multiple of 8
-                binary = binary.PadLeft(((binary.Length / 8) + 1) * 8, '0');
+                case "0000":
+                    resultstring = "0";
+                    break;
+                case "0001":
+                    resultstring = "1";
+                    break;
+                case "0010":
+                    resultstring = "2";
+                    break;
+                case "0011":
+                    resultstring = "3";
+                    break;
+                case "0100":
+                    resultstring = "4";
+                    break;
+                case "0101":
+                    resultstring = "5";
+                    break;
+                case "0110":
+                    resultstring = "6";
+                    break;
+                case "0111":
+                    resultstring = "7";
+                    break;
+                case "1000":
+                    resultstring = "8";
+                    break;
+                case "1001":
+                    resultstring = "9";
+                    break;
+                case "1010":
+                    resultstring = "A";
+                    break;
+                case "1011":
+                    resultstring = "B";
+                    break;
+                case "1100":
+                    resultstring = "C";
+                    break;
+                case "1101":
+                    resultstring = "D";
+                    break;
+                case "1110":
+                    resultstring = "E";
+                    break;
+                case "1111":
+                    resultstring = "F";
+                    break;
+                default:
+                    break;
             }
-
-            for (int i = 0; i < binary.Length; i += 8)
+            switch (binhigh)
             {
-                string eightBits = binary.Substring(i, 8);
-                result.AppendFormat("{0:X2}", Convert.ToByte(eightBits, 2));
+                case "0000":
+                    resultstring = "0" + resultstring;
+                    break;
+                case "0001":
+                    resultstring = "1" + resultstring;
+                    break;
+                case "0010":
+                    resultstring = "2" + resultstring;
+                    break;
+                case "0011":
+                    resultstring = "3" + resultstring;
+                    break;
+                case "0100":
+                    resultstring = "4" +resultstring;
+                    break;
+                case "0101":
+                    resultstring = "5" + resultstring;
+                    break;
+                case "0110":
+                    resultstring = "6" + resultstring;
+                    break;
+                case "0111":
+                    resultstring = "7" + resultstring;
+                    break;
+                case "1000":
+                    resultstring = "8" + resultstring;
+                    break;
+                case "1001":
+                    resultstring = "9" + resultstring;
+                    break;
+                case "1010":
+                    resultstring = "A" + resultstring;
+                    break;
+                case "1011":
+                    resultstring = "B" + resultstring;
+                    break;
+                case "1100":
+                    resultstring = "C" + resultstring;
+                    break;
+                case "1101":
+                    resultstring = "D" + resultstring;
+                    break;
+                case "1110":
+                    resultstring = "E" + resultstring;
+                    break;
+                case "1111":
+                    resultstring = "F" + resultstring;
+                    break;
+                default:
+                    break;
             }
-            string resultstring = result.ToString();
-            for (int i = 0; resultstring.Length < 2; i++)
-            {
-                resultstring = "0" + resultstring;
-            }
-            if (resultstring.EndsWith("A"))
-            { resultstring = resultstring.Substring(0, 1) + "ah"; }
-            if (resultstring.EndsWith("B"))
-            { resultstring = resultstring.Substring(0, 1) + "bh"; }
-            if (resultstring.EndsWith("C"))
-            { resultstring = resultstring.Substring(0, 1) + "ch"; }
-            if (resultstring.EndsWith("D"))
-            { resultstring = resultstring.Substring(0, 1) + "dh"; }
-            if (resultstring.EndsWith("E"))
-            { resultstring = resultstring.Substring(0, 1) + "eh"; }
-            if (resultstring.EndsWith("F"))
-            { resultstring = resultstring.Substring(0, 1) + "fh"; }
-            if (!resultstring.EndsWith("h")) resultstring = resultstring + "h";
-
-            return resultstring;
+            return resultstring + "h";
+            
         }
-
+        
+        //umrechner von dezimal zu binär
         private string dec2bin(int decint)
         {
 
@@ -2896,6 +2765,7 @@ namespace PIC_Simulator
 
         }
 
+        //umrechner von binär zu dezimal
         private int bin2dec(string binarystring)
         {
             int val = 1;
@@ -2911,61 +2781,77 @@ namespace PIC_Simulator
             return decint;
         }
 
+        //Ports zum setzen der Bits__________________________________________________________________________
+
+        //PortA input
         private void port1_0_Click(object sender, EventArgs e)
         {
-            if (port1_0.BackColor == Color.Transparent) port1_0.BackColor = Color.Firebrick;
+            if (port1_0.BackColor == Color.Transparent)
+            {
+                port1_0.BackColor = Color.Firebrick;
+                bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 7) + "1";
+            }
             else
             {
-                if (port1_0.BackColor == Color.Firebrick) port1_0.BackColor = Color.SteelBlue;
-                else
-                {
-                    if (port1_0.BackColor == Color.SteelBlue) port1_0.BackColor = Color.Transparent;
-                }
+                port1_0.BackColor = Color.Transparent;
+                bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 7) + "0";
             }
-            
+
         }
 
         private void port1_1_Click(object sender, EventArgs e)
         {
-            if (port1_1.BackColor == Color.Transparent) port1_1.BackColor = Color.Firebrick;
-            else {
-                if (port1_1.BackColor == Color.Firebrick) port1_1.BackColor = Color.SteelBlue;
-                else {
-                    if (port1_1.BackColor == Color.SteelBlue) port1_1.BackColor = Color.Transparent;
-                }
+            if (port1_1.BackColor == Color.Transparent)
+            {
+                port1_1.BackColor = Color.Firebrick;
+                bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 6) + "1" + bank1[2, 6].Value.ToString().Substring(7);
+            }
+            else
+            {
+                port1_1.BackColor = Color.Transparent;
+                bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 6) + "0" + bank1[2, 6].Value.ToString().Substring(7);
             }
         }
 
         private void port1_2_Click(object sender, EventArgs e)
         {
-            if (port1_2.BackColor == Color.Transparent) port1_2.BackColor = Color.Firebrick;
-            else {
-                if (port1_2.BackColor == Color.Firebrick) port1_2.BackColor = Color.SteelBlue;
-                else {
-                    if (port1_2.BackColor == Color.SteelBlue) port1_2.BackColor = Color.Transparent;
-                }
+            if (port1_2.BackColor == Color.Transparent)
+            {
+                port1_2.BackColor = Color.Firebrick;
+                bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 5) + "1" + bank1[2, 6].Value.ToString().Substring(6);
+            }
+            else
+            {
+                port1_2.BackColor = Color.Transparent;
+                bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 5) + "0" + bank1[2, 6].Value.ToString().Substring(6);
             }
         }
 
         private void port1_3_Click(object sender, EventArgs e)
         {
-            if (port1_3.BackColor == Color.Transparent) port1_3.BackColor = Color.Firebrick;
-            else {
-                if (port1_3.BackColor == Color.Firebrick) port1_3.BackColor = Color.SteelBlue;
-                else {
-                    if (port1_3.BackColor == Color.SteelBlue) port1_3.BackColor = Color.Transparent;
-                }
+            if (port1_3.BackColor == Color.Transparent)
+            {
+                port1_3.BackColor = Color.Firebrick;
+                bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 4) + "1" + bank1[2, 6].Value.ToString().Substring(5);
+            }
+            else
+            {
+                port1_3.BackColor = Color.Transparent;
+                bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 4) + "0" + bank1[2, 6].Value.ToString().Substring(5);
             }
         }
 
         private void port1_4_Click(object sender, EventArgs e)
         {
-            if (port1_4.BackColor == Color.Transparent) port1_4.BackColor = Color.Firebrick;
-            else {
-                if (port1_4.BackColor == Color.Firebrick) port1_4.BackColor = Color.SteelBlue;
-                else {
-                    if (port1_4.BackColor == Color.SteelBlue) port1_4.BackColor = Color.Transparent;
-                }
+            if (port1_4.BackColor == Color.Transparent)
+            {
+                port1_4.BackColor = Color.Firebrick;
+                bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 3) + "1" + bank1[2, 6].Value.ToString().Substring(4);
+            }
+            else
+            {
+                port1_4.BackColor = Color.Transparent;
+                bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 3) + "0" + bank1[2, 6].Value.ToString().Substring(4);
             }
         }
 
@@ -2975,7 +2861,14 @@ namespace PIC_Simulator
             else {
                 if (port1_5.BackColor == Color.Firebrick) port1_5.BackColor = Color.SteelBlue;
                 else {
-                    if (port1_5.BackColor == Color.SteelBlue) port1_5.BackColor = Color.Transparent;
+                    if (port1_5.BackColor == Color.SteelBlue)
+                    {
+                        port1_5.BackColor = Color.Transparent;
+                        port1_5.Visible = false;
+                        port3_5.Visible = true;
+                        bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 2) + "0" + bank1[2, 6].Value.ToString().Substring(3);
+                        
+                    }
                 }
             }
         }
@@ -2986,7 +2879,14 @@ namespace PIC_Simulator
             else {
                 if (port1_6.BackColor == Color.Firebrick) port1_6.BackColor = Color.SteelBlue;
                 else {
-                    if (port1_6.BackColor == Color.SteelBlue) port1_6.BackColor = Color.Transparent;
+                    if (port1_6.BackColor == Color.SteelBlue)
+                    {
+                        port1_6.BackColor = Color.Transparent;
+                        port1_6.Visible = false;
+                        port3_6.Visible = true;
+                        bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 1) + "0" + bank1[2, 6].Value.ToString().Substring(2);
+                        
+                    }
                 }
             }
         }
@@ -2997,110 +2897,147 @@ namespace PIC_Simulator
             else {
                 if (port1_7.BackColor == Color.Firebrick) port1_7.BackColor = Color.SteelBlue;
                 else {
-                    if (port1_7.BackColor == Color.SteelBlue) port1_7.BackColor = Color.Transparent;
+                    if (port1_7.BackColor == Color.SteelBlue)
+                    {
+                        port1_7.BackColor = Color.Transparent;
+                        port1_7.Visible = false;
+                        port3_7.Visible = true;
+                        bank1[2, 6].Value = "0" + bank1[2, 6].Value.ToString().Substring(1);
+                        
+                    }
                 }
             }
         }
 
-        private void port2_0_Click(object sender, EventArgs e)
-        {
-            if (port2_0.BackColor == Color.Transparent) port2_0.BackColor = Color.Firebrick;
-            else {
-                if (port2_0.BackColor == Color.Firebrick) port2_0.BackColor = Color.SteelBlue;
-                else {
-                    if (port2_0.BackColor == Color.SteelBlue) port2_0.BackColor = Color.Transparent;
-                }
-            }
-        }
 
+        //PortB input
         private void port2_7_Click(object sender, EventArgs e)
         {
-            if (port2_7.BackColor == Color.Transparent) port2_7.BackColor = Color.Firebrick;
-            else {
-                if (port2_7.BackColor == Color.Firebrick) port2_7.BackColor = Color.SteelBlue;
-                else {
-                    if (port2_7.BackColor == Color.SteelBlue) port2_7.BackColor = Color.Transparent;
-                }
+            if (port2_7.BackColor == Color.Transparent)
+            {
+                port2_7.BackColor = Color.Firebrick;
+                bank1[2, 7].Value =  "1" + bank1[2, 7].Value.ToString().Substring(1);
+            }
+            else
+            {
+                port2_7.BackColor = Color.Transparent;
+                bank1[2, 7].Value =  "0" + bank1[2, 7].Value.ToString().Substring(1);
             }
         }
 
         private void port2_6_Click(object sender, EventArgs e)
         {
-            if (port2_6.BackColor == Color.Transparent) port2_6.BackColor = Color.Firebrick;
-            else {
-                if (port2_6.BackColor == Color.Firebrick) port2_6.BackColor = Color.SteelBlue;
-                else {
-                    if (port2_6.BackColor == Color.SteelBlue) port2_6.BackColor = Color.Transparent;
-                }
+            if (port2_6.BackColor == Color.Transparent)
+            {
+                port2_6.BackColor = Color.Firebrick;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 1) + "1" + bank1[2, 7].Value.ToString().Substring(2);
+            }
+            else
+            {
+                port2_6.BackColor = Color.Transparent;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 1) + "0" + bank1[2, 7].Value.ToString().Substring(2);
             }
         }
 
         private void port2_5_Click(object sender, EventArgs e)
         {
-            if (port2_5.BackColor == Color.Transparent) port2_5.BackColor = Color.Firebrick;
-            else {
-                if (port2_5.BackColor == Color.Firebrick) port2_5.BackColor = Color.SteelBlue;
-                else {
-                    if (port2_5.BackColor == Color.SteelBlue) port2_5.BackColor = Color.Transparent;
-                }
+            if (port2_5.BackColor == Color.Transparent)
+            {
+                port2_5.BackColor = Color.Firebrick;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 2) + "1" + bank1[2, 7].Value.ToString().Substring(3);
+            }
+            else
+            {
+                port2_5.BackColor = Color.Transparent;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 2) + "0" + bank1[2, 7].Value.ToString().Substring(3);
             }
         }
 
         private void port2_4_Click(object sender, EventArgs e)
         {
-            if (port2_4.BackColor == Color.Transparent) port2_4.BackColor = Color.Firebrick;
-            else {
-                if (port2_4.BackColor == Color.Firebrick) port2_4.BackColor = Color.SteelBlue;
-                else {
-                    if (port2_4.BackColor == Color.SteelBlue) port2_4.BackColor = Color.Transparent;
-                }
+            if (port2_4.BackColor == Color.Transparent)
+            {
+                port2_4.BackColor = Color.Firebrick;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 3) + "1" + bank1[2, 7].Value.ToString().Substring(4);
+            }
+            else
+            {
+                port2_4.BackColor = Color.Transparent;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 3) + "0" + bank1[2, 7].Value.ToString().Substring(4);
             }
         }
 
         private void port2_3_Click(object sender, EventArgs e)
         {
-            if (port2_3.BackColor == Color.Transparent) port2_3.BackColor = Color.Firebrick;
-            else {
-                if (port2_3.BackColor == Color.Firebrick) port2_3.BackColor = Color.SteelBlue;
-                else {
-                    if (port2_3.BackColor == Color.SteelBlue) port2_3.BackColor = Color.Transparent;
-                }
+            if (port2_3.BackColor == Color.Transparent)
+            {
+                port2_3.BackColor = Color.Firebrick;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 4) + "1" + bank1[2, 7].Value.ToString().Substring(5);
+            }
+            else
+            {
+                port2_3.BackColor = Color.Transparent;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 4) + "0" + bank1[2, 7].Value.ToString().Substring(5);
             }
         }
 
         private void port2_2_Click(object sender, EventArgs e)
         {
-            if (port2_2.BackColor == Color.Transparent) port2_2.BackColor = Color.Firebrick;
-            else {
-                if (port2_2.BackColor == Color.Firebrick) port2_2.BackColor = Color.SteelBlue;
-                else {
-                    if (port2_2.BackColor == Color.SteelBlue) port2_2.BackColor = Color.Transparent;
-                }
+            if (port2_2.BackColor == Color.Transparent)
+            {
+                port2_2.BackColor = Color.Firebrick;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 5) + "1" + bank1[2, 7].Value.ToString().Substring(6);
+            }
+            else
+            {
+                port2_2.BackColor = Color.Transparent;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 5) + "0" + bank1[2, 7].Value.ToString().Substring(6);
             }
         }
 
         private void port2_1_Click(object sender, EventArgs e)
         {
-            if (port2_1.BackColor == Color.Transparent) port2_1.BackColor = Color.Firebrick;
-            else {
-                if (port2_1.BackColor == Color.Firebrick) port2_1.BackColor = Color.SteelBlue;
-                else {
-                    if (port2_1.BackColor == Color.SteelBlue) port2_1.BackColor = Color.Transparent;
-                }
+            if (port2_1.BackColor == Color.Transparent)
+            {
+                port2_1.BackColor = Color.Firebrick;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 6) + "1" + bank1[2, 7].Value.ToString().Substring(7);
+            }
+            else
+            {
+                port2_1.BackColor = Color.Transparent;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 6) + "0" + bank1[2, 7].Value.ToString().Substring(7);
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void port2_0_Click(object sender, EventArgs e)
         {
-            inputporta();
+            if (port2_1.BackColor == Color.Transparent)
+            {
+                port2_1.BackColor = Color.Firebrick;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 7) + "1";
+            }
+            else
+            {
+                port2_1.BackColor = Color.Transparent;
+                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 7) + "0";
+            }
+        }
+        //____________________________________________________________________________________________________
+
+        //timer öffnet methode um port a zu setzen
+        private void timerinputporta_Tick(object sender, EventArgs e)
+        {
+           inputporta();
            
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+        //timer öffnet methode um port b zu setzen
+        private void timerinputportb_Tick(object sender, EventArgs e)
         {
            inputportb();
         }
 
+        //bestimmen von takta
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             try
@@ -3108,6 +3045,7 @@ namespace PIC_Simulator
                 takta = Convert.ToInt32(textBox1.Text.ToString());
                 if (takta < 0) { takta = 0; textBox1.Text = "0"; }
                 if (takta > 10000) { takta = 10000; textBox1.Text = "10000"; }
+                
 
             }
             catch {
@@ -3115,9 +3053,12 @@ namespace PIC_Simulator
                 textBox1.Text = "300";
             }
 
-            timer1.Interval = takta;
+            timerinputporta.Interval = takta;
+            if (takta > taktb) timer4.Interval = takta;
+            else { timer4.Interval = taktb; }
         }
 
+        //bestimmen von taktb
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             try
@@ -3125,39 +3066,46 @@ namespace PIC_Simulator
                 taktb = Convert.ToInt32(textBox2.Text.ToString());
                 if (taktb < 0) { taktb = 0; textBox2.Text = "0"; }
                 if (taktb > 10000) { taktb = 10000; textBox2.Text = "10000"; }
-
+                
             }
             catch
             {
                 taktb = 300;
                 textBox2.Text = "300";
             }
-            timer2.Interval = taktb;
+            timerinputportb.Interval = taktb;
+            if (takta > taktb) timer4.Interval = takta;
+            else { timer4.Interval = taktb; }
         }
 
+        //berechnung quarzfrequenz
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             try {
-                while (textBox3.Text.ToString() == "") { goto Warte; }
-                quarzfrequenz = Convert.ToInt32(textBox3.Text);
-                if(quarzfrequenz < 0) { quarzfrequenz = 4000; textBox3.Text = quarzfrequenz.ToString(); }
+                while (txt_freq.Text.ToString() == "") { goto Warte; }
+                quarzfrequenz = Convert.ToInt32(txt_freq.Text);
+                if(quarzfrequenz < 0) { quarzfrequenz = 4000; txt_freq.Text = quarzfrequenz.ToString(); }
             }
-            catch { quarzfrequenz = 4000; textBox3.Text = quarzfrequenz.ToString(); }
+            catch { quarzfrequenz = 4000; txt_freq.Text = quarzfrequenz.ToString(); }
 
             Warte:
             ;
         }
 
+        //timer zum berechnen der quarzfrequenz
         private void timer3_Tick(object sender, EventArgs e)
         {
             
             if (quarzfrequenz != 0)
             {
-                runtime = (4000 / quarzfrequenz) * befehlnr;
-                textBox4.Text = runtime.ToString();
+                runtime = runtime + (4000 / quarzfrequenz) * befehlnr;
+                txt_runtime.Text = runtime.ToString();
+                befehlnr = 0;
             }
         }
+       
         
+        //timer zur hardwareansteuerung 
         private void timer4_Tick(object sender, EventArgs e)
         {
             if (conn.status() == "Connection established" && startbtn.Enabled == true)
@@ -3173,20 +3121,24 @@ namespace PIC_Simulator
                     retporta = String.Join(String.Empty, retporta.Select(c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
                     retportb = String.Join(String.Empty, retportb.Select(c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
                     retporta = "---" + retporta.Substring(3);
-                    dataGridView2[2, 6].Value = retporta;
-                    dataGridView2[2, 7].Value = retportb;
+                    bank0[2, 6].Value = retporta;
+                    bank0[2, 7].Value = retportb;
+
                 }
                 catch { }
             }
             else
             {
                 //timer4.Stop();
-                //timer2.Start();
-                //timer1.Start();
+                //timerinputportb.Start();
+                //timerinputporta.Start();
                 //button5.Visible = false;
             }
         }
         
+        //Hardwareansteuerung______________________________________________________________________________
+                                                                                                         
+        //konvertiert string der vom picview geschicht wird in hex um
         private string picview2hex(string picview)
         {
             string hex = "";
@@ -3211,21 +3163,17 @@ namespace PIC_Simulator
             }
             return hex;
 
-        }
-
-        private void button2_Click(object sender, EventArgs e)
+        }                                                    
+                                                                                                         
+        //neues Form zur Hardwareansteuerung geöffnet                                                    
+        private void button2_Click(object sender, EventArgs e) 
         {
-
             conn = new Form2(serialPort1);
             conn.Show();
-            
-            timer4.Start();
-            button2.Enabled = false;
-            timer1.Stop();
-            timer2.Stop();
-            button5.Visible = true;
+            timer4.Start();                                                                                      
         }
-
+                                                                                                   
+        //konvertierbaren binärstring erstellen (---00000 -> 00000000)                                   
         private string makeitconvertable(string binary)
         {
             string convertedbinary = "";
@@ -3235,14 +3183,15 @@ namespace PIC_Simulator
                 else convertedbinary = convertedbinary + "0";
             }
             return convertedbinary;
-        }
-
+        } 
+                                                                                          
+        //tris a/b porta/b ausgelesen um diese an den picview senden zu können                           
         private string getcominformation()
         {
-            string trisa = makeitconvertable(dataGridView3[2, 6].Value.ToString());
-            string trisb = makeitconvertable(dataGridView3[2, 7].Value.ToString());
-            string porta = makeitconvertable(dataGridView2[2, 6].Value.ToString());
-            string portb = makeitconvertable(dataGridView2[2, 7].Value.ToString());
+            string trisa = makeitconvertable(bank1[2, 6].Value.ToString());
+            string trisb = makeitconvertable(bank1[2, 7].Value.ToString());
+            string porta = makeitconvertable(bank0[2, 6].Value.ToString());
+            string portb = makeitconvertable(bank0[2, 7].Value.ToString());
             trisa = BinaryStringToHexString(trisa).Substring(0, 2);
             trisb = BinaryStringToHexString(trisb).Substring(0, 2);
             porta = BinaryStringToHexString(porta).Substring(0, 2);
@@ -3252,8 +3201,9 @@ namespace PIC_Simulator
             porta = converttopicview(porta);
             portb = converttopicview(portb);
             return trisa+porta+trisb+portb;
-        }
-
+        } 
+                                   
+        //von hex in picviewstring konvertiert                                                           
         private string converttopicview(string hex)
         {
             string picviewstring = "";
@@ -3277,8 +3227,9 @@ namespace PIC_Simulator
                 if (hex.Substring(i, 1) == "9") picviewstring = picviewstring + "9";
             }
             return picviewstring;
-        }
-
+        }                                                   
+                                                                                                         
+        //auslesen des inputs des Picviews                                                               
         private string ReadDataSegment()
         {
             string s = "";
@@ -3308,32 +3259,319 @@ namespace PIC_Simulator
             }
 
             return s.Trim('\r');
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            serialPort1.Close();
-            timer4.Stop();
-            timer1.Start();
-            timer2.Start();
-            button5.Visible = false;
-            conn.Close();
-        }
-
+        }                                                              
+                                                                                                         
+        //Hardwareansteuerung beendet                                                                    
         private void button4_Click(object sender, EventArgs e)
-        {
-            serialPort1.Close();
-            timer4.Stop();
-            timer1.Start();
-            timer2.Start();
-            button5.Visible = false;
-            conn.Close();
-        }
+        {                                                                                                
+            serialPort1.Close();                                                                         
+            timer4.Stop();                                                                               
+            timerinputporta.Start();                                                                     
+            timerinputportb.Start();                                                                     
+            conn.Close();                                                                                
+                                                                                                         
+        }                                                                                                
+                                                                                                         
+        //_________________________________________________________________________________________________
 
+        //helpbtn öffnet pdf
         private void button3_Click(object sender, EventArgs e)
         {
             Help help = new Help();
             help.Show();
+        }
+
+        //setzt loop zum ausführen der opcodes fort
+        private void btn_weiter_Click(object sender, EventArgs e)
+        {
+            dooperatorloop();
+        }
+
+        private void port3_4_Click(object sender, EventArgs e)
+        {
+            if (port1_4.BackColor == Color.Firebrick)
+            {
+                if (port3_4.BackColor == Color.Firebrick)
+                {
+                    port3_4.BackColor = Color.Transparent;
+                    bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 3) + "0" + bank0[2, 6].Value.ToString().Substring(4);
+                }
+                else if (port3_4.BackColor == Color.SteelBlue)
+                {
+                    port3_4.BackColor = Color.Firebrick;
+                    bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 3) + "1" + bank0[2, 6].Value.ToString().Substring(4);
+                }
+                 else if (port3_4.BackColor == Color.Transparent)
+                {
+                    port3_4.BackColor = Color.SteelBlue;
+
+                }
+            }
+        }
+
+        private void port3_3_Click(object sender, EventArgs e)
+        {
+            if (port1_3.BackColor == Color.Firebrick)
+            {
+                if (port3_3.BackColor == Color.Firebrick)
+                {
+                    port3_3.BackColor = Color.Transparent;
+                    bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 4) + "0" + bank0[2, 6].Value.ToString().Substring(5);
+                }
+                else if (port3_3.BackColor == Color.SteelBlue)
+                {
+                    port3_3.BackColor = Color.Firebrick;
+                    bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 4) + "1" + bank0[2, 6].Value.ToString().Substring(5);
+                }
+                else if (port3_3.BackColor == Color.Transparent)
+                {
+                    port3_3.BackColor = Color.SteelBlue;
+                   
+                }
+            }
+        }
+
+        private void port3_2_Click(object sender, EventArgs e)
+        {
+            if (port1_2.BackColor == Color.Firebrick)
+            {
+                if (port3_2.BackColor == Color.Firebrick)
+                {
+                    port3_2.BackColor = Color.Transparent;
+                    bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 5) + "0" + bank0[2, 6].Value.ToString().Substring(6);
+                }
+                else if (port3_2.BackColor == Color.SteelBlue)
+                {
+                    port3_2.BackColor = Color.Firebrick;
+                    bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 5) + "1" + bank0[2, 6].Value.ToString().Substring(6);
+                }
+                else if (port3_2.BackColor == Color.Transparent)
+                {
+                    port3_2.BackColor = Color.SteelBlue;
+
+                }
+            }
+        }
+
+        private void port3_1_Click(object sender, EventArgs e)
+        {
+            if (port1_1.BackColor == Color.Firebrick)
+            {
+                if (port3_1.BackColor == Color.Firebrick)
+                {
+                    port3_1.BackColor = Color.Transparent;
+                    bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 6) + "0" + bank0[2, 6].Value.ToString().Substring(7);
+                }
+                else if (port3_1.BackColor == Color.SteelBlue)
+                {
+                    port3_1.BackColor = Color.Firebrick;
+                    bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 6) + "1" + bank0[2, 6].Value.ToString().Substring(7);
+                }
+                else if (port3_1.BackColor == Color.Transparent)
+                {
+                    port3_1.BackColor = Color.SteelBlue;
+
+                }
+            }
+        }
+
+        private void port3_0_Click(object sender, EventArgs e)
+        {
+            if (port1_0.BackColor == Color.Firebrick)
+            {
+                if (port3_0.BackColor == Color.Firebrick)
+                {
+                    port3_0.BackColor = Color.Transparent;
+                    bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 7) + "0";
+                }
+                else if (port3_0.BackColor == Color.SteelBlue)
+                {
+                    port3_0.BackColor = Color.Firebrick;
+                    bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 7) + "1";
+                }
+                else if (port3_0.BackColor == Color.Transparent)
+                {
+                    port3_0.BackColor = Color.SteelBlue;
+
+                }
+            }
+
+        }
+
+        private void port4_7_Click(object sender, EventArgs e)
+        {
+            if (port2_7.BackColor == Color.Firebrick)
+            {
+                if (port4_7.BackColor == Color.Firebrick)
+                {
+                    port4_7.BackColor = Color.Transparent;
+                    bank0[2, 7].Value =  "0" + bank0[2, 7].Value.ToString().Substring(1);
+                }
+                else if (port4_7.BackColor == Color.SteelBlue)
+                {
+                    port4_7.BackColor = Color.Firebrick;
+                    bank0[2, 7].Value =  "1" + bank0[2, 7].Value.ToString().Substring(1);
+                }
+                else if (port4_7.BackColor == Color.Transparent)
+                {
+                    port4_7.BackColor = Color.SteelBlue;
+
+                }
+            }
+        }
+
+        private void port4_6_Click(object sender, EventArgs e)
+        {
+            if (port2_6.BackColor == Color.Firebrick)
+            {
+                if (port4_6.BackColor == Color.Firebrick)
+                {
+                    port4_6.BackColor = Color.Transparent;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 1) + "0" + bank0[2, 7].Value.ToString().Substring(2);
+                }
+                else if (port4_6.BackColor == Color.SteelBlue)
+                {
+                    port4_6.BackColor = Color.Firebrick;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 1) + "1" + bank0[2, 7].Value.ToString().Substring(2);
+                }
+                else if (port4_6.BackColor == Color.Transparent)
+                {
+                    port4_6.BackColor = Color.SteelBlue;
+
+                }
+            }
+        }
+
+        private void port4_5_Click(object sender, EventArgs e)
+        {
+            if (port2_5.BackColor == Color.Firebrick)
+            {
+                if (port4_5.BackColor == Color.Firebrick)
+                {
+                    port4_5.BackColor = Color.Transparent;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 2) + "0" + bank0[2, 7].Value.ToString().Substring(3);
+                }
+                else if (port4_5.BackColor == Color.SteelBlue)
+                {
+                    port4_5.BackColor = Color.Firebrick;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 2) + "1" + bank0[2, 7].Value.ToString().Substring(3);
+                }
+                else if (port4_5.BackColor == Color.Transparent)
+                {
+                    port4_5.BackColor = Color.SteelBlue;
+
+                }
+            }
+        }
+
+        private void port4_4_Click(object sender, EventArgs e)
+        {
+            if (port2_4.BackColor == Color.Firebrick)
+            {
+                if (port4_4.BackColor == Color.Firebrick)
+                {
+                    port4_4.BackColor = Color.Transparent;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 3) + "0" + bank0[2, 7].Value.ToString().Substring(4);
+                }
+                else if (port4_4.BackColor == Color.SteelBlue)
+                {
+                    port4_4.BackColor = Color.Firebrick;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 3) + "1" + bank0[2, 7].Value.ToString().Substring(4);
+                }
+                else if (port4_4.BackColor == Color.Transparent)
+                {
+                    port4_4.BackColor = Color.SteelBlue;
+
+                }
+            }
+        }
+
+        private void port4_3_Click(object sender, EventArgs e)
+        {
+            if (port2_3.BackColor == Color.Firebrick)
+            {
+                if (port4_3.BackColor == Color.Firebrick)
+                {
+                    port4_3.BackColor = Color.Transparent;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 4) + "0" + bank0[2, 7].Value.ToString().Substring(5);
+                }
+                else if (port4_3.BackColor == Color.SteelBlue)
+                {
+                    port4_3.BackColor = Color.Firebrick;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 4) + "1" + bank0[2, 7].Value.ToString().Substring(5);
+                }
+                else if (port4_3.BackColor == Color.Transparent)
+                {
+                    port4_3.BackColor = Color.SteelBlue;
+
+                }
+            }
+        }
+
+        private void port4_2_Click(object sender, EventArgs e)
+        {
+            if (port2_2.BackColor == Color.Firebrick)
+            {
+                if (port4_2.BackColor == Color.Firebrick)
+                {
+                    port4_2.BackColor = Color.Transparent;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 5) + "0" + bank0[2, 7].Value.ToString().Substring(6);
+                }
+                else if (port4_2.BackColor == Color.SteelBlue)
+                {
+                    port4_2.BackColor = Color.Firebrick;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 5) + "1"+ bank0[2, 7].Value.ToString().Substring(6);
+                }
+                else if (port4_2.BackColor == Color.Transparent)
+                {
+                    port4_2.BackColor = Color.SteelBlue;
+
+                }
+            }
+        }
+
+        private void port4_1_Click(object sender, EventArgs e)
+        {
+            if (port2_1.BackColor == Color.Firebrick)
+            {
+                if (port4_1.BackColor == Color.Firebrick)
+                {
+                    port4_1.BackColor = Color.Transparent;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 6) + "0" + bank0[2, 7].Value.ToString().Substring(7);
+                }
+                else if (port4_1.BackColor == Color.SteelBlue)
+                {
+                    port4_1.BackColor = Color.Firebrick;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 6) + "1" + bank0[2, 7].Value.ToString().Substring(7);
+                }
+                else if (port4_1.BackColor == Color.Transparent)
+                {
+                    port4_1.BackColor = Color.SteelBlue;
+
+                }
+            }
+        }
+
+        private void port4_0_Click(object sender, EventArgs e)
+        {
+            if (port2_0.BackColor == Color.Firebrick)
+            {
+                if (port4_0.BackColor == Color.Firebrick)
+                {
+                    port4_0.BackColor = Color.Transparent;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 7) + "0";
+                }
+                else if (port4_0.BackColor == Color.SteelBlue)
+                {
+                    port4_0.BackColor = Color.Firebrick;
+                    bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 7) + "1";
+                }
+                else if (port4_0.BackColor == Color.Transparent)
+                {
+                    port4_0.BackColor = Color.SteelBlue;
+
+                }
+            }
         }
 
         

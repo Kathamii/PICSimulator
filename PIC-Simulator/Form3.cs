@@ -12,6 +12,7 @@ namespace PIC_Simulator
 {
     public partial class Help : Form
     {
+        //öffnen der pdf
         public Help()
         {
             InitializeComponent();
