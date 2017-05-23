@@ -77,3 +77,13 @@ D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\AxInterop.AcroPDFLib.dll
 D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.csproj.ResolveComReference.cache
 D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.exe
 D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.pdb
+D:\Workspace\PICSimulator\PIC-Simulator\bin\Debug\PIC-Simulator.exe
+D:\Workspace\PICSimulator\PIC-Simulator\bin\Debug\PIC-Simulator.pdb
+D:\Workspace\PICSimulator\PIC-Simulator\bin\Debug\Interop.AcroPDFLib.dll
+D:\Workspace\PICSimulator\PIC-Simulator\bin\Debug\AxInterop.AcroPDFLib.dll
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.csprojResolveAssemblyReference.cache
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC_Simulator.Form1.resources
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC_Simulator.Form2.resources
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC_Simulator.Help.resources
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC_Simulator.Properties.Resources.resources
+D:\Workspace\PICSimulator\PIC-Simulator\obj\Debug\PIC-Simulator.csproj.GenerateResource.Cache
