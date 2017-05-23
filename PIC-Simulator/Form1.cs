@@ -1379,6 +1379,13 @@ namespace PIC_Simulator
                         string opaddress = opcodedata.Rows[m].Cells[1].Value.ToString();
                         if (!opaddress.EndsWith("h")) opaddress = opaddress + "h";
                         while (opaddress.Length > 3) opaddress = opaddress.Substring(1);
+                        if (opaddress.Contains("A")) opaddress = opaddress.Replace("A", "a");
+                        if (opaddress.Contains("B")) opaddress = opaddress.Replace("B", "b");
+                        if (opaddress.Contains("C")) opaddress = opaddress.Replace("C", "c");
+                        if (opaddress.Contains("D")) opaddress = opaddress.Replace("D", "d");
+                        if (opaddress.Contains("E")) opaddress = opaddress.Replace("E", "e");
+                        if (opaddress.Contains("F")) opaddress = opaddress.Replace("F", "f");
+
                         if (opaddress == address)
                         {
                             rownr = m;
