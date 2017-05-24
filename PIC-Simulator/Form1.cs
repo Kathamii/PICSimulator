@@ -1603,6 +1603,7 @@ namespace PIC_Simulator
 
                 default:
                     TimerWertbefehl--;
+                    befehlnr--;
                     break;
             }
 
