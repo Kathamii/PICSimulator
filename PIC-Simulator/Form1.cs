@@ -97,16 +97,20 @@ namespace PIC_Simulator
                 bank1.Rows.Add("EECON2", "89h", "--------");
                 bank1.Rows.Add("PCLATH", "0ah", "---00000");
                 bank1.Rows.Add("INTCON", "0bh", "0000000x");
-                int button;
 
                 //timer für input/output setzen
-                timerinputporta.Interval = 5;
-                timerinputportb.Interval = 5;
+                timerinputporta.Interval = 10;
+                timerinputportb.Interval = 10;
+                takta_timer.Interval = takta;
+                taktb_timer.Interval = taktb;
                 timerinputportb.Start();
                 timerinputporta.Start();
-               
+                takta_timer.Start();
+                taktb_timer.Start();
 
-               
+
+
+
                 while ((line = file.ReadLine()) != null)
                 {
                     
@@ -176,6 +180,7 @@ namespace PIC_Simulator
                     }
                 }
                 //gleichsetzen von speicherzellen mir den Banken
+                
                 for (int i = 0; i < speicherzellen.RowCount; i++)
                 {
                     string locs = speicherzellen[1, i].Value.ToString();
@@ -200,6 +205,7 @@ namespace PIC_Simulator
             //befehle können nun ausgeführt werden
             startbtn.Enabled = true;
             stepbtn.Enabled = true;
+            readbtn.Enabled = false;
             
         }
 
@@ -248,6 +254,7 @@ namespace PIC_Simulator
                 string opstring = opcodedata.CurrentRow.Cells[3].Value.ToString();
                 row1 = opcodedata.CurrentRow.Index;
                 int retvalue = dooperator(opcode, opstring, row1);
+                portbeschaftigt = false;
                 //Zeitdurchlauf für einen Befehl
                 await Task.Delay(50);
 
@@ -275,7 +282,8 @@ namespace PIC_Simulator
         //ausführen der befehle
         private int dooperator(string opcode, string opstring, int row)
         {
-
+            inputporta();
+            inputportb();
             //Program counter
             if (opcodedata[1, opcodedata.CurrentRow.Index].Value.ToString() != "")
             txt_pc.Text = opcodedata[1, opcodedata.CurrentRow.Index].Value.ToString();
@@ -297,11 +305,13 @@ namespace PIC_Simulator
             
             befehlnr++;
             TimerWertbefehl++;
+            portbeschaftigt = true;
             switch (readopcode(binarystring))
             {
 
                 case 0:
                     //ADDWF
+                    portbeschaftigt = true;
                     string d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     string loc = BinaryStringToHexString(binarystring);
@@ -349,12 +359,12 @@ namespace PIC_Simulator
                         bank0[2, 0].Value = dec2bin(addwf);
                         bank1[2, 0].Value = dec2bin(addwf);
                     }
-                    
 
+                    portbeschaftigt = false;
                     break;
                 case 1:
                     //ANDWF
-
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -400,10 +410,11 @@ namespace PIC_Simulator
                         bank1[2, 0].Value = andwf;
                     }
 
-
+                    portbeschaftigt = false;
                     break;
                 case 2:
                     //CLRF
+                    portbeschaftigt = true;
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
 
@@ -432,7 +443,7 @@ namespace PIC_Simulator
                     }
 
                     zero = 1;
-
+                    portbeschaftigt = false;
                     break;
                 case 3:
                     //CLRW
@@ -444,6 +455,7 @@ namespace PIC_Simulator
                     break;
                 case 4:
                     //COMF
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -482,10 +494,11 @@ namespace PIC_Simulator
 
 
 
-
+                    portbeschaftigt = false;
                     break;
                 case 5:
                     //DECF
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -513,11 +526,11 @@ namespace PIC_Simulator
                         bank0[2, 0].Value = dec2bin(decf);
                         bank1[2, 0].Value = dec2bin(decf);
                     }
-
+                    portbeschaftigt = false;
                     break;
                 case 6:
                     //DECFSZ
-
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -553,12 +566,12 @@ namespace PIC_Simulator
                         //dataGridView1.Rows[rownr - 1].DefaultCellStyle.BackColor = Color.White;
                     }
                     else zero = 0;
-
+                    portbeschaftigt = false;
 
                     break;
                 case 7:
                     //INCF
-
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -587,11 +600,11 @@ namespace PIC_Simulator
                         bank0[2, 0].Value = dec2bin(incf);
                         bank1[2, 0].Value = dec2bin(incf);
                     }
-
+                    portbeschaftigt = false;
                     break;
                 case 8:
                     //INCFSZ
-
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -626,11 +639,12 @@ namespace PIC_Simulator
 
                     }
                     else zero = 0;
-
+                    portbeschaftigt = false;
                     break;
                 case 9:
                     //IORWF
 
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -669,10 +683,11 @@ namespace PIC_Simulator
                         bank1[2, 0].Value = iorwf;
                     }
                     else speicherzellen[2, locrow].Value = iorwf;
-
+                    portbeschaftigt = false;
                     break;
                 case 10:
                     //MOVF
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -743,12 +758,12 @@ namespace PIC_Simulator
                         }
                     }
 
-
+                    portbeschaftigt = false;
                     break;
                 case 11:
                     //MOVWF
 
-
+                    portbeschaftigt = true;
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
                     if (loc == "00h")
@@ -833,15 +848,15 @@ namespace PIC_Simulator
                         }
 
                     }
-                   
 
+                    portbeschaftigt = false;
                     break;
                 case 12:
                     //NOP
                     break;
                 case 13:
                     //RLF
-
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -872,10 +887,11 @@ namespace PIC_Simulator
                         bank0[2, 0].Value = shift;
                         bank1[2, 0].Value = shift;
                     }
-
+                    portbeschaftigt = false;
                     break;
                 case 14:
                     //RRF     
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -907,11 +923,11 @@ namespace PIC_Simulator
                     }
 
 
-
+                    portbeschaftigt = false;
                     break;
                 case 15:
                     //SUBWF
-
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -956,11 +972,12 @@ namespace PIC_Simulator
                         bank0[2, 0].Value = dec2bin(sublw);
                         bank1[2, 0].Value = dec2bin(sublw);
                     }
-
+                    portbeschaftigt = false;
 
                     break;
                 case 16:
                     //SWAPF
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -987,11 +1004,11 @@ namespace PIC_Simulator
                         bank0[2, 0].Value = swap;
                         bank1[2, 0].Value = swap;
                     }
-
+                    portbeschaftigt = false;
                     break;
                 case 17:
                     //XORWF
-
+                    portbeschaftigt = true;
                     d = binarystring.Substring(6, 1);
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -1029,11 +1046,11 @@ namespace PIC_Simulator
                         bank0[2, 0].Value = xorwf;
                         bank1[2, 0].Value = xorwf;
                     }
-
+                    portbeschaftigt = false;
                     break;
                 case 18:
                     //BCF
-
+                    portbeschaftigt = true;
 
                     string bcf;
                     int b = bin2dec(binarystring.Substring(4, 3));
@@ -1163,14 +1180,14 @@ namespace PIC_Simulator
                             }
                         }
                     }
-                         
-                       
-                   
 
+
+
+                    portbeschaftigt = false;
                     break;
                 case 19:
                     //BSF
-
+                    portbeschaftigt = false;
                     string bsf;
                     b = bin2dec(binarystring.Substring(4, 3));
                     binarystring = binarystring.Substring(7);
@@ -1301,12 +1318,12 @@ namespace PIC_Simulator
                             }
                         }
                     }
-
+                    portbeschaftigt = false;
                     break;
                 case 20:
                     //BTFSC
 
-
+                    portbeschaftigt = true;
                     b = bin2dec(binarystring.Substring(4, 3));
                     binarystring = binarystring.Substring(7);
                     loc = BinaryStringToHexString(binarystring);
@@ -1332,6 +1349,7 @@ namespace PIC_Simulator
                         opcodedata.CurrentCell = opcodedata[0, opcodedata.CurrentRow.Index + 1];
                         //dataGridView1.Rows[j - 1].DefaultCellStyle.BackColor = Color.White;
                     }
+                    portbeschaftigt = false;
                     break;
                 case 22:
                     //ADDLW
@@ -1666,7 +1684,6 @@ namespace PIC_Simulator
                     befehlnr--;
                     break;
             }
-
             clcktimer();
             //for (int i = 0; i < speicherzellen.RowCount; i++)
             //{
@@ -1677,6 +1694,8 @@ namespace PIC_Simulator
             //}
 
             //überschrieben der banken mit den werten der speicherzellen
+            
+
             for (int i = 0; i < speicherzellen.RowCount; i++)
             {
                 string locs = speicherzellen[1, i].Value.ToString();
@@ -1692,12 +1711,13 @@ namespace PIC_Simulator
                     }
                 }
             }
-
-            setinputoutput();
-            inputporta();
-            inputportb();
-
+           
             
+            //setinputoutput();
+            portbeschaftigt = false;
+
+
+
             //if (rbie == 1)
             //{
             //    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
@@ -1736,7 +1756,9 @@ namespace PIC_Simulator
                 }
             }
             //Frage Bits im Interrupt Register ab
+            portbeschaftigt = true;
             testifinterrupt();
+            portbeschaftigt = false;
 
             return 1234567;
         }
@@ -1751,132 +1773,132 @@ namespace PIC_Simulator
                 if (bank1[2, 2].Value.ToString().Substring(4, 1) == "1")
                 {
 
-                    switch (Prescaler_bits)
-                    {
-                        case "000":
-                            //1:1
-                            textBox_Prescaler.Text = "1:1 (Watchdog)";
-                            if (TimerWertbefehl > 255 && TimerWertbefehl != 0)
-                            {
+                    //switch (Prescaler_bits)
+                    //{
+                    //    case "000":
+                    //        //1:1
+                    //        textBox_Prescaler.Text = "1:1 (Watchdog)";
+                    //        if (TimerWertbefehl > 255 && TimerWertbefehl != 0)
+                    //        {
 
-                                TimerWertbefehl = TimerWertbefehl - 256;
-                                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                            }
-                            bank0[2, 2].Value = dec2bin(TimerWertbefehl);
+                    //            TimerWertbefehl = TimerWertbefehl - 256;
+                    //            bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                    //        }
+                    //        bank0[2, 2].Value = dec2bin(TimerWertbefehl);
 
 
-                            break;
+                    //        break;
 
-                        case "001":
-                            //1:2
-                            textBox_Prescaler.Text = "1:2 (Watchdog)";
-                            if (TimerWertbefehl % 2 == 0 && TimerWertbefehl != 0)
-                            {
-                                Ausgabewert = Ausgabewert + 1;
-                                if (Ausgabewert > 255)
-                                {
-                                    Ausgabewert = 0;
-                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                                }
-                                bank0[2, 2].Value = dec2bin(Ausgabewert);
-                            }
-                            break;
+                    //    case "001":
+                    //        //1:2
+                    //        textBox_Prescaler.Text = "1:2 (Watchdog)";
+                    //        if (TimerWertbefehl % 2 == 0 && TimerWertbefehl != 0)
+                    //        {
+                    //            Ausgabewert = Ausgabewert + 1;
+                    //            if (Ausgabewert > 255)
+                    //            {
+                    //                Ausgabewert = 0;
+                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                    //            }
+                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
+                    //        }
+                    //        break;
 
-                        case "010":
-                            //1:4
-                            textBox_Prescaler.Text = "1:4 (Watchdog)";
-                            if (TimerWertbefehl % 4 == 0 && TimerWertbefehl != 0)
-                            {
-                                Ausgabewert = Ausgabewert + 1;
-                                if (Ausgabewert > 255)
-                                {
-                                    Ausgabewert = 0;
-                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
-                                    for (int i = 0; i<speicherzellen.RowCount-1;i++)
-                                    {
-                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
-                                    }
-                                }
-                                bank0[2, 2].Value = dec2bin(Ausgabewert);
-                            }
-                            break;
+                    //    case "010":
+                    //        //1:4
+                    //        textBox_Prescaler.Text = "1:4 (Watchdog)";
+                    //        if (TimerWertbefehl % 4 == 0 && TimerWertbefehl != 0)
+                    //        {
+                    //            Ausgabewert = Ausgabewert + 1;
+                    //            if (Ausgabewert > 255)
+                    //            {
+                    //                Ausgabewert = 0;
+                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                    //                bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                    //                for (int i = 0; i<speicherzellen.RowCount-1;i++)
+                    //                {
+                    //                    if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                    //                }
+                    //            }
+                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
+                    //        }
+                    //        break;
 
-                        case "011":
-                            //1:8
-                            textBox_Prescaler.Text = "1:8 (Watchdog)";
-                            if (TimerWertbefehl % 8 == 0 && TimerWertbefehl != 0)
-                            {
-                                Ausgabewert = Ausgabewert + 1;
-                                if (Ausgabewert > 255)
-                                {
-                                    Ausgabewert = 0;
-                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                                }
-                                bank0[2, 2].Value = dec2bin(Ausgabewert);
-                            }
-                            break;
+                    //    case "011":
+                    //        //1:8
+                    //        textBox_Prescaler.Text = "1:8 (Watchdog)";
+                    //        if (TimerWertbefehl % 8 == 0 && TimerWertbefehl != 0)
+                    //        {
+                    //            Ausgabewert = Ausgabewert + 1;
+                    //            if (Ausgabewert > 255)
+                    //            {
+                    //                Ausgabewert = 0;
+                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                    //            }
+                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
+                    //        }
+                    //        break;
 
-                        case "100":
-                            //1:16
-                            textBox_Prescaler.Text = "1:16 (Watchdog)";
-                            if (TimerWertbefehl % 16 == 0 && TimerWertbefehl != 0)
-                            {
-                                Ausgabewert = Ausgabewert + 1;
-                                if (Ausgabewert > 255)
-                                {
-                                    Ausgabewert = 0;
-                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                                }
-                                bank0[2, 2].Value = dec2bin(Ausgabewert);
-                            }
-                            break;
+                    //    case "100":
+                    //        //1:16
+                    //        textBox_Prescaler.Text = "1:16 (Watchdog)";
+                    //        if (TimerWertbefehl % 16 == 0 && TimerWertbefehl != 0)
+                    //        {
+                    //            Ausgabewert = Ausgabewert + 1;
+                    //            if (Ausgabewert > 255)
+                    //            {
+                    //                Ausgabewert = 0;
+                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                    //            }
+                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
+                    //        }
+                    //        break;
 
-                        case "101":
-                            //1:32
-                            textBox_Prescaler.Text = "1:32 (Watchdog)";
-                            if (TimerWertbefehl % 32 == 0 && TimerWertbefehl != 0)
-                            {
-                                Ausgabewert = Ausgabewert + 1;
-                                if (Ausgabewert > 255)
-                                {
-                                    Ausgabewert = 0;
-                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                                }
-                                bank0[2, 2].Value = dec2bin(Ausgabewert);
-                            }
-                            break;
+                    //    case "101":
+                    //        //1:32
+                    //        textBox_Prescaler.Text = "1:32 (Watchdog)";
+                    //        if (TimerWertbefehl % 32 == 0 && TimerWertbefehl != 0)
+                    //        {
+                    //            Ausgabewert = Ausgabewert + 1;
+                    //            if (Ausgabewert > 255)
+                    //            {
+                    //                Ausgabewert = 0;
+                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                    //            }
+                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
+                    //        }
+                    //        break;
 
-                        case "110":
-                            //1:64
-                            textBox_Prescaler.Text = "1:64 (Watchdog)";
-                            if (TimerWertbefehl % 64 == 0 && TimerWertbefehl != 0)
-                            {
-                                Ausgabewert = Ausgabewert + 1;
-                                if (Ausgabewert > 255)
-                                {
-                                    Ausgabewert = 0;
-                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                                }
-                                bank0[2, 2].Value = dec2bin(Ausgabewert);
-                            }
-                            break;
+                    //    case "110":
+                    //        //1:64
+                    //        textBox_Prescaler.Text = "1:64 (Watchdog)";
+                    //        if (TimerWertbefehl % 64 == 0 && TimerWertbefehl != 0)
+                    //        {
+                    //            Ausgabewert = Ausgabewert + 1;
+                    //            if (Ausgabewert > 255)
+                    //            {
+                    //                Ausgabewert = 0;
+                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                    //            }
+                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
+                    //        }
+                    //        break;
 
-                        case "111":
-                            //1:128
-                            textBox_Prescaler.Text = "1:128 (Watchdog)";
-                            if (TimerWertbefehl % 128 == 0 && TimerWertbefehl != 0)
-                            {
-                                Ausgabewert = Ausgabewert + 1;
-                                if (Ausgabewert > 255)
-                                {
-                                    Ausgabewert = 0;
-                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                                }
-                                bank0[2, 2].Value = dec2bin(Ausgabewert);
-                            }
-                            break;
-                    }
+                    //    case "111":
+                    //        //1:128
+                    //        textBox_Prescaler.Text = "1:128 (Watchdog)";
+                    //        if (TimerWertbefehl % 128 == 0 && TimerWertbefehl != 0)
+                    //        {
+                    //            Ausgabewert = Ausgabewert + 1;
+                    //            if (Ausgabewert > 255)
+                    //            {
+                    //                Ausgabewert = 0;
+                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                    //            }
+                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
+                    //        }
+                    //        break;
+                    //}
                 }//Wenn PSA BIT 0= Timer
                 else if (bank1[2, 2].Value.ToString().Substring(4, 1) == "0")
                 {
@@ -1892,6 +1914,11 @@ namespace PIC_Simulator
                                 {
                                     Ausgabewert = 0;
                                     bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                                    for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                                    {
+                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                                    }
                                 }
                                 bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
@@ -1927,6 +1954,12 @@ namespace PIC_Simulator
                                 {
                                     Ausgabewert = 0;
                                     bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                                    for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                                    {
+                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                                    }
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
                                 }
                                 bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
@@ -1942,6 +1975,11 @@ namespace PIC_Simulator
                                 {
                                     Ausgabewert = 0;
                                     bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                                    for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                                    {
+                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                                    }
                                 }
                                 bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
@@ -1957,6 +1995,11 @@ namespace PIC_Simulator
                                 {
                                     Ausgabewert = 0;
                                     bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                                    for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                                    {
+                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                                    }
                                 }
                                 bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
@@ -1972,6 +2015,11 @@ namespace PIC_Simulator
                                 {
                                     Ausgabewert = 0;
                                     bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                                    for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                                    {
+                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                                    }
                                 }
                                 bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
@@ -1987,6 +2035,11 @@ namespace PIC_Simulator
                                 {
                                     Ausgabewert = 0;
                                     bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                                    for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                                    {
+                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                                    }
                                 }
                                 bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
@@ -2002,6 +2055,11 @@ namespace PIC_Simulator
                                 {
                                     Ausgabewert = 0;
                                     bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                                    for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                                    {
+                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                                    }
                                 }
                                 bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
@@ -2019,36 +2077,6 @@ namespace PIC_Simulator
             }
         }
 
-        //setzen der in/outputs
-        private void setinputoutput()
-        {
-            int button;
-
-            for (int i = 0; i < 8; i++)
-            {
-                if (bank1[2, 6].Value.ToString().Substring(i, 1) == "1")
-                {
-                    button = i + 1;
-                    inputoutput(button, true);
-                }
-                if (bank1[2, 6].Value.ToString().Substring(i, 1) == "0")
-                {
-                    button = i + 1;
-                    inputoutput(button, false);
-                }
-                if (bank1[2, 7].Value.ToString().Substring(i, 1) == "1")
-                {
-                    button = i + 9;
-                    inputoutput(button, true);
-                }
-                if (bank1[2, 7].Value.ToString().Substring(i, 1) == "0")
-                {
-                    button = i + 9;
-                    inputoutput(button, false);
-                }
-            }
-        }
-
         //interruptregister auf kombination testen, die einen interrupt auslöst
         private void testifinterrupt()
         {
@@ -2058,10 +2086,6 @@ namespace PIC_Simulator
                 { interrupt(); }
                 if (bank0[2, 11].Value.ToString().Substring(2, 1) == "1" && bank0[2, 11].Value.ToString().Substring(5, 1) == "1")
                 { interrupt(); }
-                //if (bank0[2, 11].Value.ToString().Substring(3, 1) == "1" && bank0[2, 11].Value.ToString().Substring(6, 1) == "1")
-                //{ interrupt(); }
-                //if (bank0[2, 11].Value.ToString().Substring(4, 1) == "1" && bank0[2, 11].Value.ToString().Substring(7, 1) == "1")
-                //{ interrupt(); }
             }
         }
 
@@ -2080,12 +2104,12 @@ namespace PIC_Simulator
         }
 
         //input aus ports in register schreiben
-        private void inputporta()
+        private async void inputporta()
         {
+            while (portbeschaftigt == true) await Task.Delay(10);
             if (port3_7.BackColor == Color.SteelBlue)
             {
-                if (bank0[2, 6].Value.ToString().Substring(0, 1) == "0") bank0[2, 6].Value = "1" + bank0[2, 6].Value.ToString().Substring(1);
-                else bank0[2, 6].Value = "0" + bank0[2, 6].Value.ToString().Substring(1);
+                
             }
             else
             {
@@ -2430,16 +2454,36 @@ namespace PIC_Simulator
                 }
 
             }
-        
-        //input aus ports in register schreiben
-        private void inputportb()
+        //ANDREW-->hier wird jetzt der Takt bestimmt! mach mal für alle ports
+        private void taktportb()
         {
             if (port4_7.BackColor == Color.SteelBlue)
             {
                 if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
+                else bank0[2, 7].Value =  "0" + bank0[2, 7].Value.ToString().Substring(1);
+            }
+        }
+        private void taktporta()
+        { }
+        //bis hier
+        //input aus ports in register schreiben
+        private async void inputportb()
+        {
+            while (portbeschaftigt == true) await Task.Delay(10);
+            //ANDREW -> Diese zeile unter dieses while packen!
+            if (bank1[2, 7].Value.ToString() == "0" + bank1[2, 7].Value.ToString().Substring(1) && port4_7.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
+                port4_7.BackColor = Color.Firebrick;
+            }
+            //bis hier
+            if (port4_7.BackColor == Color.SteelBlue)
+            {
+                //ANDREW ->bei diesem steelbluezeug in der if die sachen rausnehmen überall bei inputporta() und inputportb()
+                //bis hier
             }
             else {
+                //ANDREW -->dieses bank1 zeug überall reinmachen bitte:) (auch bei inputporta)
                 if (bank1[2, 7].Value.ToString() == "1" + bank1[2, 7].Value.ToString().Substring(1)) port2_7.BackColor = Color.Firebrick;
                 if (bank1[2, 7].Value.ToString() == "0" + bank1[2, 7].Value.ToString().Substring(1)) port2_7.BackColor = Color.Transparent;
                 if (bank0[2, 7].Value.ToString() == "1" + bank0[2, 7].Value.ToString().Substring(1)) port4_7.BackColor = Color.Firebrick;
@@ -2453,7 +2497,7 @@ namespace PIC_Simulator
                 }
             else
             {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1) + "1" + bank1[2, 7].Value.ToString().Substring(2)) port2_6.BackColor = Color.Firebrick ;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1) + "1" + bank1[2, 7].Value.ToString().Substring(2)) port2_6.BackColor = Color.Firebrick;
                 if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1) + "0" + bank1[2, 7].Value.ToString().Substring(2)) port2_6.BackColor = Color.Transparent;
                 if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 1) + "1" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Firebrick;
                 if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 1) + "0" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Transparent;
@@ -2519,19 +2563,15 @@ namespace PIC_Simulator
             }
             try
             {
-                if (speicherzellen[1, j].Value.ToString() == bank0[1, 7].Value.ToString())
+                for (int j = 0; j < speicherzellen.RowCount - 1; j++)
                 {
-                    speicherzellen[2, j].Value = bank0[2, 7].Value.ToString();
+                    if (speicherzellen[1, j].Value.ToString() == bank0[1, 7].Value.ToString())
+                    {
+                        speicherzellen[2, j].Value = bank0[2, 7].Value.ToString();
+                    }
                 }
             }
             catch { }
-
-        }
-
-        //setzen der input/outputs
-        private void inputoutput(int button, bool inout)
-        {
-          
 
         }
 
@@ -2723,7 +2763,9 @@ namespace PIC_Simulator
             string opcode = opcodedata.CurrentRow.Cells[2].Value.ToString();
             string opstring = opcodedata.CurrentRow.Cells[3].Value.ToString();
             int row1 = opcodedata.CurrentRow.Index;
+            
             int retvalue = dooperator(opcode, opstring, row1);
+            portbeschaftigt = false;
 
     
             
@@ -2905,9 +2947,11 @@ namespace PIC_Simulator
 
         //Ports zum setzen der Bits__________________________________________________________________________
 
-        //PortA input
-        private void port1_0_Click(object sender, EventArgs e)
+        //TrisA
+        private async void port1_0_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port1_0.BackColor == Color.Transparent)
             {
                 port1_0.BackColor = Color.Firebrick;
@@ -2918,11 +2962,14 @@ namespace PIC_Simulator
                 port1_0.BackColor = Color.Transparent;
                 bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 7) + "0";
             }
+            portbeschaftigt = false;
 
         }
 
-        private void port1_1_Click(object sender, EventArgs e)
+        private async void port1_1_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port1_1.BackColor == Color.Transparent)
             {
                 port1_1.BackColor = Color.Firebrick;
@@ -2933,10 +2980,13 @@ namespace PIC_Simulator
                 port1_1.BackColor = Color.Transparent;
                 bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 6) + "0" + bank1[2, 6].Value.ToString().Substring(7);
             }
+            portbeschaftigt = false;
         }
 
-        private void port1_2_Click(object sender, EventArgs e)
+        private async void port1_2_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port1_2.BackColor == Color.Transparent)
             {
                 port1_2.BackColor = Color.Firebrick;
@@ -2947,10 +2997,13 @@ namespace PIC_Simulator
                 port1_2.BackColor = Color.Transparent;
                 bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 5) + "0" + bank1[2, 6].Value.ToString().Substring(6);
             }
+            portbeschaftigt = false;
         }
 
-        private void port1_3_Click(object sender, EventArgs e)
+        private async void port1_3_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port1_3.BackColor == Color.Transparent)
             {
                 port1_3.BackColor = Color.Firebrick;
@@ -2961,10 +3014,13 @@ namespace PIC_Simulator
                 port1_3.BackColor = Color.Transparent;
                 bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 4) + "0" + bank1[2, 6].Value.ToString().Substring(5);
             }
+            portbeschaftigt = false;
         }
 
-        private void port1_4_Click(object sender, EventArgs e)
+        private async void port1_4_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port1_4.BackColor == Color.Transparent)
             {
                 port1_4.BackColor = Color.Firebrick;
@@ -2975,10 +3031,13 @@ namespace PIC_Simulator
                 port1_4.BackColor = Color.Transparent;
                 bank1[2, 6].Value = bank1[2, 6].Value.ToString().Substring(0, 3) + "0" + bank1[2, 6].Value.ToString().Substring(4);
             }
+            portbeschaftigt = false;
         }
 
-        private void port1_5_Click(object sender, EventArgs e)
+        private async void port1_5_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port1_5.BackColor == Color.Transparent) port1_5.BackColor = Color.Firebrick;
             else {
                 if (port1_5.BackColor == Color.Firebrick) port1_5.BackColor = Color.SteelBlue;
@@ -2993,10 +3052,13 @@ namespace PIC_Simulator
                     }
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port1_6_Click(object sender, EventArgs e)
+        private async void port1_6_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port1_6.BackColor == Color.Transparent) port1_6.BackColor = Color.Firebrick;
             else {
                 if (port1_6.BackColor == Color.Firebrick) port1_6.BackColor = Color.SteelBlue;
@@ -3011,10 +3073,13 @@ namespace PIC_Simulator
                     }
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port1_7_Click(object sender, EventArgs e)
+        private async void port1_7_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port1_7.BackColor == Color.Transparent) port1_7.BackColor = Color.Firebrick;
             else {
                 if (port1_7.BackColor == Color.Firebrick) port1_7.BackColor = Color.SteelBlue;
@@ -3029,12 +3094,15 @@ namespace PIC_Simulator
                     }
                 }
             }
+            portbeschaftigt = false;
         }
 
 
-        //PortB input
-        private void port2_7_Click(object sender, EventArgs e)
+        //TrisB
+        private async void port2_7_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port2_7.BackColor == Color.Transparent)
             {
                 port2_7.BackColor = Color.Firebrick;
@@ -3045,104 +3113,126 @@ namespace PIC_Simulator
                 port2_7.BackColor = Color.Transparent;
                 bank1[2, 7].Value =  "0" + bank1[2, 7].Value.ToString().Substring(1);
             }
+            portbeschaftigt = false;
         }
 
-        private void port2_6_Click(object sender, EventArgs e)
+        private async void port2_6_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port2_6.BackColor == Color.Transparent)
             {
                 port2_6.BackColor = Color.Firebrick;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 1) + "1" + bank1[2, 7].Value.ToString().Substring(2);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 1) + "1" + bank1[2, 7].Value.ToString().Substring(2);
             }
             else
             {
                 port2_6.BackColor = Color.Transparent;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 1) + "0" + bank1[2, 7].Value.ToString().Substring(2);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 1) + "0" + bank1[2, 7].Value.ToString().Substring(2);
             }
+            portbeschaftigt = false;
         }
 
-        private void port2_5_Click(object sender, EventArgs e)
+        private async void port2_5_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port2_5.BackColor == Color.Transparent)
             {
                 port2_5.BackColor = Color.Firebrick;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 2) + "1" + bank1[2, 7].Value.ToString().Substring(3);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 2) + "1" + bank1[2, 7].Value.ToString().Substring(3);
             }
             else
             {
                 port2_5.BackColor = Color.Transparent;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 2) + "0" + bank1[2, 7].Value.ToString().Substring(3);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 2) + "0" + bank1[2, 7].Value.ToString().Substring(3);
             }
+            portbeschaftigt = false;
         }
 
-        private void port2_4_Click(object sender, EventArgs e)
+        private async void port2_4_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port2_4.BackColor == Color.Transparent)
             {
                 port2_4.BackColor = Color.Firebrick;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 3) + "1" + bank1[2, 7].Value.ToString().Substring(4);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 3) + "1" + bank1[2, 7].Value.ToString().Substring(4);
             }
             else
             {
                 port2_4.BackColor = Color.Transparent;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 3) + "0" + bank1[2, 7].Value.ToString().Substring(4);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 3) + "0" + bank1[2, 7].Value.ToString().Substring(4);
             }
+            portbeschaftigt = false;
         }
 
-        private void port2_3_Click(object sender, EventArgs e)
+        private async void port2_3_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port2_3.BackColor == Color.Transparent)
             {
                 port2_3.BackColor = Color.Firebrick;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 4) + "1" + bank1[2, 7].Value.ToString().Substring(5);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 4) + "1" + bank1[2, 7].Value.ToString().Substring(5);
             }
             else
             {
                 port2_3.BackColor = Color.Transparent;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 4) + "0" + bank1[2, 7].Value.ToString().Substring(5);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 4) + "0" + bank1[2, 7].Value.ToString().Substring(5);
             }
+            portbeschaftigt = false;
         }
 
-        private void port2_2_Click(object sender, EventArgs e)
+        private async void port2_2_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port2_2.BackColor == Color.Transparent)
             {
                 port2_2.BackColor = Color.Firebrick;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 5) + "1" + bank1[2, 7].Value.ToString().Substring(6);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 5) + "1" + bank1[2, 7].Value.ToString().Substring(6);
             }
             else
             {
                 port2_2.BackColor = Color.Transparent;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 5) + "0" + bank1[2, 7].Value.ToString().Substring(6);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 5) + "0" + bank1[2, 7].Value.ToString().Substring(6);
             }
+            portbeschaftigt = false;
         }
 
-        private void port2_1_Click(object sender, EventArgs e)
+        private async void port2_1_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(50);
             if (port2_1.BackColor == Color.Transparent)
             {
                 port2_1.BackColor = Color.Firebrick;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 6) + "1" + bank1[2, 7].Value.ToString().Substring(7);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 6) + "1" + bank1[2, 7].Value.ToString().Substring(7);
             }
             else
             {
                 port2_1.BackColor = Color.Transparent;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 6) + "0" + bank1[2, 7].Value.ToString().Substring(7);
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 6) + "0" + bank1[2, 7].Value.ToString().Substring(7);
             }
+            portbeschaftigt = false;
         }
 
-        private void port2_0_Click(object sender, EventArgs e)
+        private async void port2_0_Click(object sender, EventArgs e)
         {
-            if (port2_1.BackColor == Color.Transparent)
+            portbeschaftigt = true;
+            await Task.Delay(50);
+            if (port2_0.BackColor == Color.Transparent)
             {
                 port2_1.BackColor = Color.Firebrick;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 7) + "1";
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 7) + "1";
             }
             else
             {
-                port2_1.BackColor = Color.Transparent;
-                bank1[2, 7].Value = bank1[2, 6].Value.ToString().Substring(0, 7) + "0";
+                port2_0.BackColor = Color.Transparent;
+                bank1[2, 7].Value = bank1[2, 7].Value.ToString().Substring(0, 7) + "0";
             }
+            portbeschaftigt = false;
         }
         //____________________________________________________________________________________________________
 
@@ -3175,7 +3265,7 @@ namespace PIC_Simulator
                 textBox1.Text = "300";
             }
 
-            timerinputporta.Interval = takta;
+            takta_timer.Interval = takta;
             if (takta > taktb) timer4.Interval = takta;
             else { timer4.Interval = taktb; }
         }
@@ -3195,7 +3285,7 @@ namespace PIC_Simulator
                 taktb = 300;
                 textBox2.Text = "300";
             }
-            timerinputportb.Interval = taktb;
+            taktb_timer.Interval = taktb;
             if (takta > taktb) timer4.Interval = takta;
             else { timer4.Interval = taktb; }
         }
@@ -3231,9 +3321,17 @@ namespace PIC_Simulator
         private void timer4_Tick(object sender, EventArgs e)
         {
             if (conn.status() == "Connection established" && startbtn.Enabled == true)
-            {
+            { 
+                //ANDREW -> alle ports (also nicht tris sondern ports!) hier so rein (hier das bsp von port4_7 musstest du oben auch schon so einstellen, einfach vopy paste..)
+                if (bank1[2, 7].Value.ToString() == "0" + bank1[2, 7].Value.ToString().Substring(1) && port4_7.BackColor == Color.SteelBlue)
+                {
+                    bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
+                    port4_7.BackColor = Color.Firebrick;
+                }
+                //bis hier
                 try
                 {
+                    portbeschaftigt = true;
                     serialPort1.Write(getcominformation() + '\r');
                     string returnval = ReadDataSegment();
                     string retporta = returnval.Substring(0, 2);
@@ -3243,9 +3341,10 @@ namespace PIC_Simulator
                     retporta = String.Join(String.Empty, retporta.Select(c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
                     retportb = String.Join(String.Empty, retportb.Select(c => Convert.ToString(Convert.ToInt32(c.ToString(), 16), 2).PadLeft(4, '0')));
                     retporta = "---" + retporta.Substring(3);
+
                     bank0[2, 6].Value = retporta;
                     bank0[2, 7].Value = retportb;
-
+                    portbeschaftigt = false;
                 }
                 catch { }
             }
@@ -3389,7 +3488,9 @@ namespace PIC_Simulator
             serialPort1.Close();                                                                         
             timer4.Stop();                                                                               
             timerinputporta.Start();                                                                     
-            timerinputportb.Start();                                                                     
+            timerinputportb.Start();
+            taktb_timer.Start();
+            takta_timer.Start();                                                                     
             conn.Close();                                                                                
                                                                                                          
         }                                                                                                
@@ -3408,9 +3509,11 @@ namespace PIC_Simulator
         {
             dooperatorloop();
         }
-
-        private void port3_4_Click(object sender, EventArgs e)
+        //PortA
+        private async void port3_4_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(100);
             if (port1_4.BackColor == Color.Firebrick)
             {
                 if (port3_4.BackColor == Color.Firebrick)
@@ -3427,12 +3530,15 @@ namespace PIC_Simulator
                 {
                     port3_4.BackColor = Color.SteelBlue;
 
+                    
                 }
-            }
+            }portbeschaftigt = false;
         }
 
-        private void port3_3_Click(object sender, EventArgs e)
+        private async void port3_3_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(100);
             if (port1_3.BackColor == Color.Firebrick)
             {
                 if (port3_3.BackColor == Color.Firebrick)
@@ -3451,10 +3557,13 @@ namespace PIC_Simulator
                    
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port3_2_Click(object sender, EventArgs e)
+        private async void port3_2_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(100);
             if (port1_2.BackColor == Color.Firebrick)
             {
                 if (port3_2.BackColor == Color.Firebrick)
@@ -3473,10 +3582,13 @@ namespace PIC_Simulator
 
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port3_1_Click(object sender, EventArgs e)
+        private async void port3_1_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(100);
             if (port1_1.BackColor == Color.Firebrick)
             {
                 if (port3_1.BackColor == Color.Firebrick)
@@ -3495,10 +3607,13 @@ namespace PIC_Simulator
 
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port3_0_Click(object sender, EventArgs e)
+        private async void port3_0_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(100);
             if (port1_0.BackColor == Color.Firebrick)
             {
                 if (port3_0.BackColor == Color.Firebrick)
@@ -3517,20 +3632,25 @@ namespace PIC_Simulator
 
                 }
             }
+            portbeschaftigt = false;
 
         }
 
-        private void port4_7_Click(object sender, EventArgs e)
+        //PortB
+        private async void port4_7_Click(object sender, EventArgs e)
         {
-            bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
-            bank1[2, 11].Value = bank0[2, 11].Value.ToString();
-            for (int i = 0; i < speicherzellen.RowCount - 1; i++)
-            {
-                if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
-            }
-            if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1") interrupt();
+            portbeschaftigt = true;
+            await Task.Delay(100);
+            
             if (port2_7.BackColor == Color.Firebrick)
             {
+                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
+                bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                {
+                    if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                }
+                if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1") interrupt();
                 if (port4_7.BackColor == Color.Firebrick)
                 {
                     port4_7.BackColor = Color.Transparent;
@@ -3547,19 +3667,23 @@ namespace PIC_Simulator
 
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port4_6_Click(object sender, EventArgs e)
+        private async void port4_6_Click(object sender, EventArgs e)
         {
-            bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
-            bank1[2, 11].Value = bank0[2, 11].Value.ToString();
-            for (int i = 0; i < speicherzellen.RowCount - 1; i++)
-            {
-                if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
-            }
-            if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1") interrupt();
+            portbeschaftigt = true;
+            await Task.Delay(100);
+           
             if (port2_6.BackColor == Color.Firebrick)
             {
+                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
+                bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                {
+                    if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                }
+                if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1") interrupt();
                 if (port4_6.BackColor == Color.Firebrick)
                 {
                     port4_6.BackColor = Color.Transparent;
@@ -3576,19 +3700,23 @@ namespace PIC_Simulator
 
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port4_5_Click(object sender, EventArgs e)
+        private async void port4_5_Click(object sender, EventArgs e)
         {
-            bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
-            bank1[2, 11].Value = bank0[2, 11].Value.ToString();
-            for (int i = 0; i < speicherzellen.RowCount - 1; i++)
-            {
-                if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
-            }
-            if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1" ) interrupt();
+            portbeschaftigt = true;
+            await Task.Delay(100);
+           
             if (port2_5.BackColor == Color.Firebrick)
             {
+                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
+                bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                {
+                    if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                }
+                if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1") interrupt();
                 if (port4_5.BackColor == Color.Firebrick)
                 {
                     port4_5.BackColor = Color.Transparent;
@@ -3605,19 +3733,23 @@ namespace PIC_Simulator
 
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port4_4_Click(object sender, EventArgs e)
+        private async void port4_4_Click(object sender, EventArgs e)
         {
-            bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
-            bank1[2, 11].Value = bank0[2, 11].Value.ToString();
-            for (int i = 0; i < speicherzellen.RowCount - 1; i++)
-            {
-                if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
-            }
-            if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1") interrupt();
+            portbeschaftigt = true;
+            await Task.Delay(100);
+           
             if (port2_4.BackColor == Color.Firebrick)
             {
+                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
+                bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                {
+                    if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                }
+                if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1") interrupt();
                 if (port4_4.BackColor == Color.Firebrick)
                 {
                     port4_4.BackColor = Color.Transparent;
@@ -3634,10 +3766,13 @@ namespace PIC_Simulator
 
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port4_3_Click(object sender, EventArgs e)
+        private async void port4_3_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(100);
             if (port2_3.BackColor == Color.Firebrick)
             {
                 if (port4_3.BackColor == Color.Firebrick)
@@ -3656,10 +3791,13 @@ namespace PIC_Simulator
 
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port4_2_Click(object sender, EventArgs e)
+        private async void port4_2_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(100);
             if (port2_2.BackColor == Color.Firebrick)
             {
                 if (port4_2.BackColor == Color.Firebrick)
@@ -3678,10 +3816,13 @@ namespace PIC_Simulator
 
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port4_1_Click(object sender, EventArgs e)
+        private async void port4_1_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(100);
             if (port2_1.BackColor == Color.Firebrick)
             {
                 if (port4_1.BackColor == Color.Firebrick)
@@ -3700,10 +3841,13 @@ namespace PIC_Simulator
 
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void port4_0_Click(object sender, EventArgs e)
+        private async void port4_0_Click(object sender, EventArgs e)
         {
+            portbeschaftigt = true;
+            await Task.Delay(100);
             if (port2_0.BackColor == Color.Firebrick)
             {
                 if (port4_0.BackColor == Color.Firebrick)
@@ -3728,16 +3872,17 @@ namespace PIC_Simulator
                     if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 2) + "1" + bank0[2, 11].Value.ToString().Substring(4, 2) + "1" + bank0[2, 11].Value.ToString().Substring(7)) interrupt();
                 }
             }
+            portbeschaftigt = false;
         }
 
-        private void label27_Click(object sender, EventArgs e)
+        private void takta_timer_Tick(object sender, EventArgs e)
         {
-
+            taktporta();
         }
 
-        private void txt_stack_TextChanged(object sender, EventArgs e)
+        private void taktb_timer_Tick(object sender, EventArgs e)
         {
-
+            taktportb();
         }
     }
 }

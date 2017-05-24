@@ -122,6 +122,8 @@
             this.timerinputporta = new System.Windows.Forms.Timer(this.components);
             this.timerinputportb = new System.Windows.Forms.Timer(this.components);
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.txt_Prescaler = new System.Windows.Forms.Label();
+            this.textBox_Prescaler = new System.Windows.Forms.TextBox();
             this.label26 = new System.Windows.Forms.Label();
             this.txt_pc = new System.Windows.Forms.TextBox();
             this.label25 = new System.Windows.Forms.Label();
@@ -138,8 +140,8 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.timer5 = new System.Windows.Forms.Timer(this.components);
             this.portsettimer = new System.Windows.Forms.Timer(this.components);
-            this.textBox_Prescaler = new System.Windows.Forms.TextBox();
-            this.txt_Prescaler = new System.Windows.Forms.Label();
+            this.takta_timer = new System.Windows.Forms.Timer(this.components);
+            this.taktb_timer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.opcodedata)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bank0)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -1149,6 +1151,22 @@
             this.groupBox7.TabIndex = 97;
             this.groupBox7.TabStop = false;
             // 
+            // txt_Prescaler
+            // 
+            this.txt_Prescaler.AutoSize = true;
+            this.txt_Prescaler.Location = new System.Drawing.Point(202, 22);
+            this.txt_Prescaler.Name = "txt_Prescaler";
+            this.txt_Prescaler.Size = new System.Drawing.Size(51, 13);
+            this.txt_Prescaler.TabIndex = 12;
+            this.txt_Prescaler.Text = "Prescaler";
+            // 
+            // textBox_Prescaler
+            // 
+            this.textBox_Prescaler.Location = new System.Drawing.Point(205, 41);
+            this.textBox_Prescaler.Name = "textBox_Prescaler";
+            this.textBox_Prescaler.Size = new System.Drawing.Size(100, 20);
+            this.textBox_Prescaler.TabIndex = 11;
+            // 
             // label26
             // 
             this.label26.AutoSize = true;
@@ -1180,7 +1198,6 @@
             this.txt_stack.Name = "txt_stack";
             this.txt_stack.Size = new System.Drawing.Size(100, 20);
             this.txt_stack.TabIndex = 7;
-            this.txt_stack.TextChanged += new System.EventHandler(this.txt_stack_TextChanged);
             // 
             // btn_conndisconn
             // 
@@ -1254,22 +1271,13 @@
             // 
             this.timer4.Tick += new System.EventHandler(this.timer4_Tick);
             // 
-            // textBox_Prescaler
+            // takta_timer
             // 
-            this.textBox_Prescaler.Location = new System.Drawing.Point(205, 41);
-            this.textBox_Prescaler.Name = "textBox_Prescaler";
-            this.textBox_Prescaler.Size = new System.Drawing.Size(100, 20);
-            this.textBox_Prescaler.TabIndex = 11;
+            this.takta_timer.Tick += new System.EventHandler(this.takta_timer_Tick);
             // 
-            // txt_Prescaler
+            // taktb_timer
             // 
-            this.txt_Prescaler.AutoSize = true;
-            this.txt_Prescaler.Location = new System.Drawing.Point(202, 22);
-            this.txt_Prescaler.Name = "txt_Prescaler";
-            this.txt_Prescaler.Size = new System.Drawing.Size(51, 13);
-            this.txt_Prescaler.TabIndex = 12;
-            this.txt_Prescaler.Text = "Prescaler";
-            this.txt_Prescaler.Click += new System.EventHandler(this.label27_Click);
+            this.taktb_timer.Tick += new System.EventHandler(this.taktb_timer_Tick);
             // 
             // Form1
             // 
@@ -1420,6 +1428,8 @@
         private System.Windows.Forms.Timer portsettimer;
         private System.Windows.Forms.TextBox textBox_Prescaler;
         private System.Windows.Forms.Label txt_Prescaler;
+        private System.Windows.Forms.Timer takta_timer;
+        private System.Windows.Forms.Timer taktb_timer;
     }
 }
 
