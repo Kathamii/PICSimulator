@@ -33,6 +33,8 @@ namespace PIC_Simulator
         int Ausgabewert;
         int takta = 300;
         int taktb = 300;
+        bool interupt = false;
+        int row1;
         Color colorset;
         Form2 conn;
 
@@ -79,8 +81,8 @@ namespace PIC_Simulator
                 bank0.Rows.Add("PORTB", "06h", "xxxxxxxx");
                 bank0.Rows.Add("EEDATA", "08h", "xxxxxxxx");
                 bank0.Rows.Add("EEADR", "09h", "xxxxxxxx");
-                bank0.Rows.Add("PCLATH", "0Ah", "---00000");
-                bank0.Rows.Add("INTCON", "0Bh", "0000000x");
+                bank0.Rows.Add("PCLATH", "0ah", "---00000");
+                bank0.Rows.Add("INTCON", "0bh", "0000000x");
 
                 bank1.Rows.Add("w", "", "");
                 bank1.Rows.Add("INDF", "80h", "--------");
@@ -92,13 +94,13 @@ namespace PIC_Simulator
                 bank1.Rows.Add("TRISB", "86h", "11111111");
                 bank1.Rows.Add("EECON1", "88h", "---0x000");
                 bank1.Rows.Add("EECON2", "89h", "--------");
-                bank1.Rows.Add("PCLATH", "0Ah", "---00000");
-                bank1.Rows.Add("INTCON", "0Bh", "0000000x");
+                bank1.Rows.Add("PCLATH", "0ah", "---00000");
+                bank1.Rows.Add("INTCON", "0bh", "0000000x");
                 int button;
 
                 //timer für input/output setzen
-                timerinputporta.Interval = takta;
-                timerinputportb.Interval = taktb;
+                timerinputporta.Interval = 5;
+                timerinputportb.Interval = 5;
                 timerinputportb.Start();
                 timerinputporta.Start();
                
@@ -229,6 +231,7 @@ namespace PIC_Simulator
             while (opcodedata.CurrentRow.Index < opcodedata.RowCount && opcodedata.CurrentRow.Cells[0].Value.ToString() == "False")
 
             {
+                while (interupt == true) await Task.Delay(1000);
 
                 //try
                 //{
@@ -242,10 +245,10 @@ namespace PIC_Simulator
                 opcodedata.CurrentRow.DefaultCellStyle.BackColor = Color.LightSalmon;
                 string opcode = opcodedata.CurrentRow.Cells[2].Value.ToString();
                 string opstring = opcodedata.CurrentRow.Cells[3].Value.ToString();
-                int row = opcodedata.CurrentRow.Index;
-                int retvalue = dooperator(opcode, opstring, row);
+                row1 = opcodedata.CurrentRow.Index;
+                int retvalue = dooperator(opcode, opstring, row1);
                 //Zeitdurchlauf für einen Befehl
-                await Task.Delay(5);
+                await Task.Delay(50);
 
 
                 if (retvalue != 1234567)
@@ -271,6 +274,7 @@ namespace PIC_Simulator
         //ausführen der befehle
         private int dooperator(string opcode, string opstring, int row)
         {
+
             //Program counter
             if (opcodedata[1, opcodedata.CurrentRow.Index].Value.ToString() != "")
             txt_pc.Text = opcodedata[1, opcodedata.CurrentRow.Index].Value.ToString();
@@ -763,21 +767,72 @@ namespace PIC_Simulator
                     }
                     if (exist)
                     {
+
                         speicherzellen[2, locrow1].Value = bank0[2, 0].Value.ToString();
+                            for (int i = 0; i < bank1.RowCount; i++)
+                            {
+                                string a = speicherzellen[1, locrow1].Value.ToString();
+                                string c = bank1[1, i].Value.ToString();
+                            if (c.Contains("A"))  c = c.Replace("A", "a");
+                            if (c.Contains("B")) c = c.Replace("B", "a");
+                            if (c.Contains("C")) c = c.Replace("C", "a");
+                            if (c.Contains("D")) c = c.Replace("D", "a");
+                            if (c.Contains("E")) c = c.Replace("E", "a");
+                            if (c.Contains("F")) c = c.Replace("F", "a");
+
+                            string e = bank0[1, i].Value.ToString();
+                            if (e.Contains("A")) e = e.Replace("A", "a");
+                            if (e.Contains("B")) e = e.Replace("B", "a");
+                            if (e.Contains("C")) e = e.Replace("C", "a");
+                            if (e.Contains("D")) e = e.Replace("D", "a");
+                            if (e.Contains("E")) e = e.Replace("E", "a");
+                            if (e.Contains("F")) e = e.Replace("F", "a");
+
+                            if (speicherzellen[1, locrow1].Value.ToString() == c)
+                                {
+                                    bank1[2, i].Value = speicherzellen[2, locrow1].Value;
+                                }
+                                if (speicherzellen[1, locrow1].Value.ToString() == e)
+                                {
+                                    bank0[2, i].Value = speicherzellen[2, locrow1].Value;
+                                }
+                        }
+                        
+
+
                     }
                     else
                     {
                         speicherzellen.Rows.Add("", loc, bank0[2, 0].Value.ToString());
-                    }
-                    for (int i = 0; i < bank1.RowCount; i++)
-                    {
-                        string a = speicherzellen[1, speicherzellen.RowCount - 1].Value.ToString();
-                        string c = bank1[1, i].Value.ToString(); ;
-                        if (speicherzellen[1, speicherzellen.RowCount - 1].Value.ToString() == bank1[1, i].Value.ToString())
+                        for (int i = 0; i < bank1.RowCount; i++)
                         {
-                            bank1[2, i].Value = speicherzellen[2, speicherzellen.RowCount - 1].Value;
+                            string a = speicherzellen[1, speicherzellen.RowCount - 1].Value.ToString();
+                            string c = bank1[1, i].Value.ToString();
+                            if (c.Contains("A")) c.Replace("A", "a");
+                            if (c.Contains("B")) c.Replace("B", "a");
+                            if (c.Contains("C")) c.Replace("C", "a");
+                            if (c.Contains("D")) c.Replace("D", "a");
+                            if (c.Contains("E")) c.Replace("E", "a");
+                            if (c.Contains("F")) c.Replace("F", "a");
+                            string e = bank0[1, i].Value.ToString();
+                            if (e.Contains("A")) e = e.Replace("A", "a");
+                            if (e.Contains("B")) e = e.Replace("B", "a");
+                            if (e.Contains("C")) e = e.Replace("C", "a");
+                            if (e.Contains("D")) e = e.Replace("D", "a");
+                            if (e.Contains("E")) e = e.Replace("E", "a");
+                            if (e.Contains("F")) e = e.Replace("F", "a");
+                            if (speicherzellen[1, speicherzellen.RowCount - 1].Value.ToString() == c)
+                            {
+                                bank1[2, i].Value = speicherzellen[2, speicherzellen.RowCount - 1].Value;
+                            }
+                            if (speicherzellen[1, speicherzellen.RowCount - 1].Value.ToString() == e)
+                            {
+                                bank0[2, i].Value = speicherzellen[2, speicherzellen.RowCount - 1].Value;
+                            }
                         }
+
                     }
+                   
 
                     break;
                 case 12:
@@ -1439,6 +1494,10 @@ namespace PIC_Simulator
                     befehlnr++;
                     TimerWertbefehl++;
                     bank0[2, 11].Value = "1" + bank0[2, 11].Value.ToString().Substring(1);
+                    int sendreturnrow = returnrow + 1;
+                    returnrow = 1234567;
+                    txt_stack.Text = "";
+                    return sendreturnrow;
 
                     break;
                 case 30:
@@ -1448,7 +1507,7 @@ namespace PIC_Simulator
                     binarystring = binarystring.Substring(6);
                     bank0[2, 0].Value = binarystring;
                     bank1[2, 0].Value = binarystring;
-                    int sendreturnrow = returnrow + 1;
+                    sendreturnrow = returnrow + 1;
                     returnrow = 1234567;
                     txt_stack.Text = "";
                     return sendreturnrow;
@@ -1608,14 +1667,14 @@ namespace PIC_Simulator
             }
 
             clcktimer();
-            for(int i = 0; i<speicherzellen.RowCount;i++)
-            {
-                if (speicherzellen[1,i].Value.ToString() == bank0[1,11].Value.ToString())
-                {
-                    speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
-                }
-            }
-            
+            //for (int i = 0; i < speicherzellen.RowCount; i++)
+            //{
+            //    if (speicherzellen[1, i].Value.ToString() == bank0[1, 11].Value.ToString())
+            //    {
+            //        speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+            //    }
+            //}
+
             //überschrieben der banken mit den werten der speicherzellen
             for (int i = 0; i < speicherzellen.RowCount; i++)
             {
@@ -1634,6 +1693,8 @@ namespace PIC_Simulator
             }
 
             setinputoutput();
+            inputporta();
+            inputportb();
 
             
             //if (rbie == 1)
@@ -1648,16 +1709,16 @@ namespace PIC_Simulator
             //}
 
             //interruptbit abhängig von portb
-            if (bank0[2,7].Value.ToString().Substring(0,1) == "1")
-            {
-                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 6) + "1" + bank0[2,11].Value.ToString().Substring(7);
-                bank1[2, 11].Value = bank0[2, 11].Value.ToString();
-            }
-            else
-            {
-                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 6) + "0" + bank0[2, 11].Value.ToString().Substring(7);
-                bank1[2, 11].Value = bank0[2, 11].Value.ToString();
-            }
+            //if (bank0[2,7].Value.ToString().Substring(0,1) == "1")
+            //{
+            //    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 6) + "1" + bank0[2,11].Value.ToString().Substring(7);
+            //    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+            //}
+            //else
+            //{
+            //    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 6) + "0" + bank0[2, 11].Value.ToString().Substring(7);
+            //    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+            //}
 
             //setze Status register
             setstatusreg();
@@ -1730,6 +1791,11 @@ namespace PIC_Simulator
                                 {
                                     Ausgabewert = 0;
                                     bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                                    for (int i = 0; i<speicherzellen.RowCount-1;i++)
+                                    {
+                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                                    }
                                 }
                                 bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
@@ -1840,6 +1906,11 @@ namespace PIC_Simulator
                                 {
                                     Ausgabewert = 0;
                                     bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                                    for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                                    {
+                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                                    }
                                 }
                                 bank0[2, 2].Value = dec2bin(Ausgabewert);
                             }
@@ -1986,10 +2057,10 @@ namespace PIC_Simulator
                 { interrupt(); }
                 if (bank0[2, 11].Value.ToString().Substring(2, 1) == "1" && bank0[2, 11].Value.ToString().Substring(5, 1) == "1")
                 { interrupt(); }
-                if (bank0[2, 11].Value.ToString().Substring(3, 1) == "1" && bank0[2, 11].Value.ToString().Substring(6, 1) == "1")
-                { interrupt(); }
-                if (bank0[2, 11].Value.ToString().Substring(4, 1) == "1" && bank0[2, 11].Value.ToString().Substring(7, 1) == "1")
-                { interrupt(); }
+                //if (bank0[2, 11].Value.ToString().Substring(3, 1) == "1" && bank0[2, 11].Value.ToString().Substring(6, 1) == "1")
+                //{ interrupt(); }
+                //if (bank0[2, 11].Value.ToString().Substring(4, 1) == "1" && bank0[2, 11].Value.ToString().Substring(7, 1) == "1")
+                //{ interrupt(); }
             }
         }
 
@@ -2369,8 +2440,11 @@ namespace PIC_Simulator
                 else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
             }
             else {
+                if (bank1[2, 7].Value.ToString() == "1" + bank1[2, 7].Value.ToString().Substring(1)) port2_7.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == "0" + bank1[2, 7].Value.ToString().Substring(1)) port2_7.BackColor = Color.Transparent;
                 if (bank0[2, 7].Value.ToString() == "1" + bank0[2, 7].Value.ToString().Substring(1)) port4_7.BackColor = Color.Firebrick;
                 if (bank0[2, 7].Value.ToString() == "0" + bank0[2, 7].Value.ToString().Substring(1)) port4_7.BackColor = Color.Transparent;
+
             }
            if (port4_6.BackColor == Color.SteelBlue)
                 {
@@ -2379,11 +2453,11 @@ namespace PIC_Simulator
                 }
             else
             {
-
-            
-                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 1) + "1" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Firebrick ;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1) + "1" + bank1[2, 7].Value.ToString().Substring(2)) port2_6.BackColor = Color.Firebrick ;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1) + "0" + bank1[2, 7].Value.ToString().Substring(2)) port2_6.BackColor = Color.Transparent;
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 1) + "1" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Firebrick;
                 if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 1) + "0" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Transparent;
-             }
+            }
             if (port4_5.BackColor == Color.SteelBlue)
             {
                 if (bank0[2, 7].Value.ToString().Substring(2, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 2) + "1" + bank0[2, 7].Value.ToString().Substring(3);
@@ -2391,6 +2465,8 @@ namespace PIC_Simulator
                 
             }
             else {
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2) + "1" + bank1[2, 7].Value.ToString().Substring(3)) port2_5.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2) + "0" + bank1[2, 7].Value.ToString().Substring(3)) port2_5.BackColor = Color.Transparent;
                 if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 2) + "1" + bank0[2, 7].Value.ToString().Substring(3)) port4_5.BackColor = Color.Firebrick;
                 if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 2) + "0" + bank0[2, 7].Value.ToString().Substring(3)) port4_5.BackColor = Color.Transparent;
             }
@@ -2400,8 +2476,10 @@ namespace PIC_Simulator
                 else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 3) + "0" + bank0[2, 7].Value.ToString().Substring(4);
             }
             else {
-                if (bank0[2, 7].ToString() == bank0[2, 7].Value.ToString().Substring(0, 3) + "1" + bank0[2, 7].Value.ToString().Substring(4)) port4_4.BackColor = Color.Firebrick ;
+                if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 3) + "1" + bank0[2, 7].Value.ToString().Substring(4)) port4_4.BackColor = Color.Firebrick ;
                 if (bank0[2, 7].Value.ToString() == bank0[2, 7].Value.ToString().Substring(0, 3) + "0" + bank0[2, 7].Value.ToString().Substring(4)) port4_4.BackColor = Color.Transparent;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) + "1" + bank1[2, 7].Value.ToString().Substring(4)) port2_4.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) + "0" + bank1[2, 7].Value.ToString().Substring(4)) port2_4.BackColor = Color.Transparent;
             }
             if (port4_3.BackColor == Color.SteelBlue)
             {
@@ -2458,18 +2536,28 @@ namespace PIC_Simulator
         }
 
         //inetrrupt-methode
-        public async void interrupt()
+        public void interrupt()
         {
+            interupt = true;
             btn_interrupt.Enabled = true;
-            
-            
-            await Task.Delay(5000);
+            btn_interrupt.BackColor = Color.Red;
+            returnrow = opcodedata.CurrentRow.Index ;
+            txt_stack.Text = opcodedata[1, row1].Value.ToString();
+            if (txt_stack.Text == "") opcodedata[1, row1+1].Value.ToString();
+            bank0[2, 11].Value = "0" + bank0[2, 11].Value.ToString().Substring(1);
+            bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+            for (int i = 0;i<speicherzellen.RowCount-1;i++)
+            {
+                if (speicherzellen[1, i].Value.ToString() == bank0[1, 11].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString(); ;
+            }
             for (int i = 0; opcodedata.Rows.Count> i;i++)
             {
                 if (opcodedata[1, i].Value.ToString() == "0004")
-                    opcodedata.CurrentCell = opcodedata[1, i];
+                    opcodedata.CurrentCell = opcodedata[1, i-1];
             }
-            btn_interrupt.Enabled = false;  
+            btn_interrupt.BackColor = Color.Transparent;
+            btn_interrupt.Enabled = false;
+            interupt = false;
         }
         
         //aus dem opcode den befehl ausleden, welcher durchgeführt werden muss
@@ -2625,17 +2713,19 @@ namespace PIC_Simulator
         }
 
         //ausführen eines befehls nach klick des step buttons
-        private void stepbtn_Click_1(object sender, EventArgs e)
+        private async void stepbtn_Click_1(object sender, EventArgs e)
         {
-
+            while (interupt == true) await Task.Delay(1000);
             timer_freq.Interval = 200;
             timer_freq.Start();
 
             if (opcodedata.CurrentRow.DefaultCellStyle.BackColor == Color.White || opcodedata.CurrentRow.DefaultCellStyle.BackColor == Color.LightGray) colorset = opcodedata.CurrentRow.DefaultCellStyle.BackColor;
             string opcode = opcodedata.CurrentRow.Cells[2].Value.ToString();
             string opstring = opcodedata.CurrentRow.Cells[3].Value.ToString();
-            int row = opcodedata.CurrentRow.Index;
-            int retvalue = dooperator(opcode, opstring, row);
+            int row1 = opcodedata.CurrentRow.Index;
+            int retvalue = dooperator(opcode, opstring, row1);
+
+    
             
 
 
@@ -3432,6 +3522,13 @@ namespace PIC_Simulator
 
         private void port4_7_Click(object sender, EventArgs e)
         {
+            bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
+            bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+            for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+            {
+                if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+            }
+            if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1") interrupt();
             if (port2_7.BackColor == Color.Firebrick)
             {
                 if (port4_7.BackColor == Color.Firebrick)
@@ -3454,6 +3551,13 @@ namespace PIC_Simulator
 
         private void port4_6_Click(object sender, EventArgs e)
         {
+            bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
+            bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+            for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+            {
+                if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+            }
+            if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1") interrupt();
             if (port2_6.BackColor == Color.Firebrick)
             {
                 if (port4_6.BackColor == Color.Firebrick)
@@ -3476,6 +3580,13 @@ namespace PIC_Simulator
 
         private void port4_5_Click(object sender, EventArgs e)
         {
+            bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
+            bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+            for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+            {
+                if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+            }
+            if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1" ) interrupt();
             if (port2_5.BackColor == Color.Firebrick)
             {
                 if (port4_5.BackColor == Color.Firebrick)
@@ -3498,6 +3609,13 @@ namespace PIC_Simulator
 
         private void port4_4_Click(object sender, EventArgs e)
         {
+            bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 7) + "1";
+            bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+            for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+            {
+                if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+            }
+            if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 3) + "1" + bank0[2, 11].Value.ToString().Substring(5, 2) + "1") interrupt();
             if (port2_4.BackColor == Color.Firebrick)
             {
                 if (port4_4.BackColor == Color.Firebrick)
@@ -3601,7 +3719,13 @@ namespace PIC_Simulator
                 else if (port4_0.BackColor == Color.Transparent)
                 {
                     port4_0.BackColor = Color.SteelBlue;
-
+                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 6) + "1" + bank0[2, 11].Value.ToString().Substring(7);
+                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                    for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                    {
+                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                    }
+                    if (bank0[2, 11].Value.ToString() == "1" + bank0[2, 11].Value.ToString().Substring(1, 2) + "1" + bank0[2, 11].Value.ToString().Substring(4, 2) + "1" + bank0[2, 11].Value.ToString().Substring(7)) interrupt();
                 }
             }
         }
