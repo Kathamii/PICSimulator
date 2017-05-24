@@ -37,6 +37,7 @@ namespace PIC_Simulator
         int row1;
         Color colorset;
         Form2 conn;
+        bool portbeschaftigt = false;
 
 
 
@@ -2430,7 +2431,6 @@ namespace PIC_Simulator
 
             }
         
-
         //input aus ports in register schreiben
         private void inputportb()
         {
