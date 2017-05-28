@@ -2104,13 +2104,230 @@ namespace PIC_Simulator
         }
 
         //input aus ports in register schreiben
-        private async void inputporta()
+
+     
+        private void taktportb()
+        {
+            if (port4_7.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
+                else bank0[2, 7].Value =  "0" + bank0[2, 7].Value.ToString().Substring(1);
+            }
+            if (port4_6.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 7].Value.ToString().Substring(1, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0,1)+ "1" + bank0[2, 7].Value.ToString().Substring(2);
+                else bank0[2, 7].Value = bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 1) + "0" + bank0[2, 7].Value.ToString().Substring(2);
+            }
+            if (port4_5.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 7].Value.ToString().Substring(2, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 2) + "1" + bank0[2, 7].Value.ToString().Substring(3);
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 2) + "0" + bank0[2, 7].Value.ToString().Substring(3);
+            }
+            if (port4_4.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 7].Value.ToString().Substring(3, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0,3) + "1" + bank0[2, 7].Value.ToString().Substring(4);
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 3) + "0" + bank0[2, 7].Value.ToString().Substring(4);
+            }
+            if (port4_3.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 7].Value.ToString().Substring(4, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0,4) + "1" + bank0[2, 7].Value.ToString().Substring(5);
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 4) + "0" + bank0[2, 7].Value.ToString().Substring(5);
+            }
+            if (port4_2.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 7].Value.ToString().Substring(5, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0,5) + "1" + bank0[2, 7].Value.ToString().Substring(6);
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 5) + "0" + bank0[2, 7].Value.ToString().Substring(6);
+            }
+            if (port4_1.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 7].Value.ToString().Substring(6, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0,6)+ "1" + bank0[2, 7].Value.ToString().Substring(7);
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 6) + "0" + bank0[2, 7].Value.ToString().Substring(7);
+            }
+            if (port4_0.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 7].Value.ToString().Substring(7, 1) == "0") bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0,7) + "1";
+                else bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 7) + "0";
+            }
+        }
+        private void taktporta()
+        {
+            if (port3_4.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 6].Value.ToString().Substring(3, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 3) + "1" + bank0[2, 6].Value.ToString().Substring(4);
+                else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 3) + "0" + bank0[2, 6].Value.ToString().Substring(4);
+            }
+            if (port3_3.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 6].Value.ToString().Substring(4, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 4) + "1" + bank0[2, 6].Value.ToString().Substring(5);
+                else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 4) + "0" + bank0[2, 6].Value.ToString().Substring(5);
+            }
+            if (port3_2.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 6].Value.ToString().Substring(5, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 5) + "1" + bank0[2, 6].Value.ToString().Substring(6);
+                else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 5) + "0" + bank0[2, 6].Value.ToString().Substring(6);
+            }
+            if (port3_1.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 6].Value.ToString().Substring(6, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 6) + "1" + bank0[2, 6].Value.ToString().Substring(7);
+                else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 6) + "0" + bank0[2, 6].Value.ToString().Substring(7);
+            }
+            if (port3_0.BackColor == Color.SteelBlue)
+            {
+                if (bank0[2, 6].Value.ToString().Substring(7, 1) == "0") bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 7) + "1";
+                else bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 7) + "0";
+            }
+        }
+     
+        //input aus ports in register schreiben
+        private async void inputportb()
         {
             while (portbeschaftigt == true) await Task.Delay(10);
+            
             if (bank1[2, 7].Value.ToString() == "0" + bank1[2, 7].Value.ToString().Substring(1) && port4_7.BackColor == Color.SteelBlue)
             {
                 bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
                 port4_7.BackColor = Color.Firebrick;
+            }
+          
+            if (port4_7.BackColor == Color.SteelBlue)
+            {
+                
+            }
+            else {
+              
+                if (bank1[2, 7].Value.ToString() == "1" + bank1[2, 7].Value.ToString().Substring(1)) port2_7.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == "0" + bank1[2, 7].Value.ToString().Substring(1)) port2_7.BackColor = Color.Transparent;
+                if (bank0[2, 7].Value.ToString() == "1" + bank0[2, 7].Value.ToString().Substring(1)) port4_7.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == "0" + bank0[2, 7].Value.ToString().Substring(1)) port4_7.BackColor = Color.Transparent;
+
+            }
+            if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0,1)+ "0" + bank1[2, 7].Value.ToString().Substring(2) && port4_6.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0,1) + "1" + bank0[2, 7].Value.ToString().Substring(2);
+                port4_6.BackColor = Color.Firebrick;
+            }
+            if (port4_6.BackColor == Color.SteelBlue)
+                {
+                   
+                }
+            else
+            {
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0,1) + "1" + bank1[2, 7].Value.ToString().Substring(2)) port2_6.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1)+ "0" + bank1[2, 7].Value.ToString().Substring(2)) port2_6.BackColor = Color.Transparent;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1)+ "1" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1)+ "0" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Transparent;
+            }
+            if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2) + "0" + bank1[2, 7].Value.ToString().Substring(3) && port4_5.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 2) + "1" + bank0[2, 7].Value.ToString().Substring(3);
+                port4_5.BackColor = Color.Firebrick;
+            }
+            if (port4_5.BackColor == Color.SteelBlue)
+            {
+                
+                
+            }
+            else {
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2)+ "1" + bank1[2, 7].Value.ToString().Substring(3)) port2_5.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2)+ "0" + bank1[2, 7].Value.ToString().Substring(3)) port2_5.BackColor = Color.Transparent;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2)+ "1" + bank0[2, 7].Value.ToString().Substring(3)) port4_5.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2)+ "0" + bank0[2, 7].Value.ToString().Substring(3)) port4_5.BackColor = Color.Transparent;
+            }
+            if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) + "0" + bank1[2, 7].Value.ToString().Substring(4) && port4_4.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 3) + "1" + bank0[2, 7].Value.ToString().Substring(4);
+                port4_4.BackColor = Color.Firebrick;
+            }
+            if (port4_4.BackColor == Color.SteelBlue)
+            {
+               
+            }
+            else {
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) +"1" + bank1[2, 7].Value.ToString().Substring(4)) port2_4.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) +"0" + bank1[2, 7].Value.ToString().Substring(4)) port2_4.BackColor = Color.Transparent;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) +"1" + bank0[2, 7].Value.ToString().Substring(4)) port4_4.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) +"0" + bank0[2, 7].Value.ToString().Substring(4)) port4_4.BackColor = Color.Transparent;
+            }
+            if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "0" + bank1[2, 7].Value.ToString().Substring(5) && port4_3.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 4) + "1" + bank0[2, 7].Value.ToString().Substring(5);
+                port4_3.BackColor = Color.Firebrick;
+            }
+            if (port4_3.BackColor == Color.SteelBlue)
+            {
+               
+            }
+            else {
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "1" + bank1[2, 7].Value.ToString().Substring(5)) port2_3.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "0" + bank1[2, 7].Value.ToString().Substring(5)) port2_3.BackColor = Color.Transparent;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "1" + bank0[2, 7].Value.ToString().Substring(5)) port4_3.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "0" + bank0[2, 7].Value.ToString().Substring(5)) port4_3.BackColor = Color.Transparent;
+            }
+            if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "0" + bank1[2, 7].Value.ToString().Substring(6) && port4_2.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 5) + "1" + bank0[2, 7].Value.ToString().Substring(6);
+                port4_2.BackColor = Color.Firebrick;
+            }
+            if (port4_2.BackColor == Color.SteelBlue)
+            {
+               
+            }
+            else {
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "1" + bank1[2, 7].Value.ToString().Substring(6)) port2_2.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "0" + bank1[2, 7].Value.ToString().Substring(6)) port2_2.BackColor = Color.Transparent;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "1" + bank0[2, 7].Value.ToString().Substring(6)) port4_2.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "0" + bank0[2, 7].Value.ToString().Substring(6)) port4_2.BackColor = Color.Transparent;
+            }
+            if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "0" + bank1[2, 7].Value.ToString().Substring(7) && port4_1.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 6) + "1" + bank0[2, 7].Value.ToString().Substring(7);
+                port4_1.BackColor = Color.Firebrick;
+            }
+            if (port4_1.BackColor == Color.SteelBlue)
+            {
+               
+            }
+            else {
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "1" + bank1[2, 7].Value.ToString().Substring(7)) port2_1.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "0" + bank1[2, 7].Value.ToString().Substring(7)) port2_1.BackColor = Color.Transparent;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "1" + bank0[2, 7].Value.ToString().Substring(7)) port4_1.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "0" + bank0[2, 7].Value.ToString().Substring(7)) port4_1.BackColor = Color.Transparent;
+            }
+            if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "0" && port4_0.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 7].Value = bank0[2, 7].Value.ToString().Substring(0, 7) + "1";
+                port4_0.BackColor = Color.Firebrick;
+            }
+            if (port4_0.BackColor == Color.SteelBlue)
+            {
+                
+            }
+            else {
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "1" ) port2_0.BackColor = Color.Firebrick;
+                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "0" ) port2_0.BackColor = Color.Transparent;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "1" ) port4_0.BackColor = Color.Firebrick;
+                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "0" ) port4_0.BackColor = Color.Transparent;
+            }
+            try
+            {
+                for (int j = 0; j < speicherzellen.RowCount - 1; j++)
+                {
+                    if (speicherzellen[1, j].Value.ToString() == bank0[1, 7].Value.ToString())
+                    {
+                        speicherzellen[2, j].Value = bank0[2, 7].Value.ToString();
+                    }
+                }
+            }
+            catch { }
+
+        }
+        private async void inputporta()
+        {
+            while (portbeschaftigt == true) await Task.Delay(10);
+            if (bank1[2, 6].Value.ToString() == "0" + bank1[2, 6].Value.ToString().Substring(1) && port3_7.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 6].Value = "1" + bank0[2, 6].Value.ToString().Substring(1);
+                port3_7.BackColor = Color.Firebrick;
             }
             if (port3_7.BackColor == Color.SteelBlue)
             {
@@ -2119,22 +2336,31 @@ namespace PIC_Simulator
             else
             {
                
-                if (bank1[2, 7].Value.ToString() == "1" + bank1[2, 7].Value.ToString().Substring(1)) port1_7.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == "0" + bank1[2, 7].Value.ToString().Substring(1)) port1_7.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == "1" + bank0[2, 7].Value.ToString().Substring(1)) port3_7.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == "0" + bank0[2, 7].Value.ToString().Substring(1)) port3_7.BackColor = Color.Transparent;
+                if (bank1[2, 6].Value.ToString() == "1" + bank1[2, 6].Value.ToString().Substring(1)) port1_7.BackColor = Color.Firebrick;
+                if (bank1[2, 6].Value.ToString() == "0" + bank1[2, 6].Value.ToString().Substring(1)) port1_7.BackColor = Color.Transparent;
+                if (bank0[2, 6].Value.ToString() == "1" + bank0[2, 6].Value.ToString().Substring(1)) port3_7.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == "0" + bank0[2, 6].Value.ToString().Substring(1)) port3_7.BackColor = Color.Transparent;
             }
-
+            if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 1) + "0" + bank1[2, 6].Value.ToString().Substring(2) && port3_6.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 1) + "1" + bank0[2, 6].Value.ToString().Substring(2);
+                port3_6.BackColor = Color.Firebrick;
+            }
             if (port3_6.BackColor == Color.SteelBlue)
             {
                
             }
             else
             {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1)+ "1" + bank1[2, 7].Value.ToString().Substring(2)) port1_6.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1) + "0" + bank1[2, 7].Value.ToString().Substring(2)) port1_6.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1) + "1" + bank0[2, 7].Value.ToString().Substring(2)) port3_6.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1) + "0" + bank0[2, 7].Value.ToString().Substring(2)) port3_6.BackColor = Color.Transparent;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 1)+ "1" + bank1[2, 6].Value.ToString().Substring(2)) port1_6.BackColor = Color.Firebrick;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 1) + "0" + bank1[2, 6].Value.ToString().Substring(2)) port1_6.BackColor = Color.Transparent;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 1) + "1" + bank0[2, 6].Value.ToString().Substring(2)) port3_6.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 1) + "0" + bank0[2, 6].Value.ToString().Substring(2)) port3_6.BackColor = Color.Transparent;
+            }
+            if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 2) + "0" + bank1[2, 6].Value.ToString().Substring(3) && port3_5.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 2) + "1" + bank0[2, 6].Value.ToString().Substring(3);
+                port3_5.BackColor = Color.Firebrick;
             }
             if (port3_5.BackColor == Color.SteelBlue)
             {
@@ -2142,10 +2368,15 @@ namespace PIC_Simulator
             }
             else
             {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2) + "1" + bank1[2, 7].Value.ToString().Substring(3)) port1_5.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2) + "0" + bank1[2, 7].Value.ToString().Substring(3)) port1_5.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2) + "1" + bank0[2, 7].Value.ToString().Substring(3)) port3_5.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2) + "0" + bank0[2, 7].Value.ToString().Substring(3)) port3_5.BackColor = Color.Transparent;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 2) + "1" + bank1[2, 6].Value.ToString().Substring(3)) port1_5.BackColor = Color.Firebrick;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 2) + "0" + bank1[2, 6].Value.ToString().Substring(3)) port1_5.BackColor = Color.Transparent;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 2) + "1" + bank0[2, 6].Value.ToString().Substring(3)) port3_5.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 2) + "0" + bank0[2, 6].Value.ToString().Substring(3)) port3_5.BackColor = Color.Transparent;
+            }
+            if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 3) + "0" + bank1[2, 6].Value.ToString().Substring(4) && port3_4.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 3) + "1" + bank0[2, 6].Value.ToString().Substring(4);
+                port3_4.BackColor = Color.Firebrick;
             }
             if (port3_4.BackColor == Color.SteelBlue)
             {
@@ -2411,50 +2642,70 @@ namespace PIC_Simulator
             }
 
             else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) + "1" + bank1[2, 7].Value.ToString().Substring(4)) port1_4.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) + "0" + bank1[2, 7].Value.ToString().Substring(4)) port1_4.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) + "1" + bank0[2, 7].Value.ToString().Substring(4)) port3_4.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) + "0" + bank0[2, 7].Value.ToString().Substring(4)) port3_4.BackColor = Color.Transparent;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 3) + "1" + bank1[2, 6].Value.ToString().Substring(4)) port1_4.BackColor = Color.Firebrick;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 3) + "0" + bank1[2, 6].Value.ToString().Substring(4)) port1_4.BackColor = Color.Transparent;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 3) + "1" + bank0[2, 6].Value.ToString().Substring(4)) port3_4.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 3) + "0" + bank0[2, 6].Value.ToString().Substring(4)) port3_4.BackColor = Color.Transparent;
             }
-                if (port3_3.BackColor == Color.SteelBlue)
+            if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 4) + "0" + bank1[2, 6].Value.ToString().Substring(5) && port3_3.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 4) + "1" + bank0[2, 6].Value.ToString().Substring(5);
+                port3_3.BackColor = Color.Firebrick;
+            }
+            if (port3_3.BackColor == Color.SteelBlue)
                 {
                    
                 }
                 else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "1" + bank1[2, 7].Value.ToString().Substring(5)) port1_3.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "0" + bank1[2, 7].Value.ToString().Substring(5)) port1_3.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "1" + bank0[2, 7].Value.ToString().Substring(5)) port3_3.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "0" + bank0[2, 7].Value.ToString().Substring(5)) port3_3.BackColor = Color.Transparent;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 4) + "1" + bank1[2, 6].Value.ToString().Substring(5)) port1_3.BackColor = Color.Firebrick;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 4) + "0" + bank1[2, 6].Value.ToString().Substring(5)) port1_3.BackColor = Color.Transparent;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 4) + "1" + bank0[2, 6].Value.ToString().Substring(5)) port3_3.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 4) + "0" + bank0[2, 6].Value.ToString().Substring(5)) port3_3.BackColor = Color.Transparent;
             }
-                if (port3_2.BackColor == Color.SteelBlue)
+            if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 5) + "0" + bank1[2, 6].Value.ToString().Substring(6) && port3_2.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 5) + "1" + bank0[2, 6].Value.ToString().Substring(6);
+                port3_2.BackColor = Color.Firebrick;
+            }
+            if (port3_2.BackColor == Color.SteelBlue)
                 {
                     
                 }
                 else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "1" + bank1[2, 7].Value.ToString().Substring(6)) port1_2.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "0" + bank1[2, 7].Value.ToString().Substring(6)) port1_2.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "1" + bank0[2, 7].Value.ToString().Substring(6)) port3_2.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "0" + bank0[2, 7].Value.ToString().Substring(6)) port3_2.BackColor = Color.Transparent;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 5) + "1" + bank1[2, 6].Value.ToString().Substring(6)) port1_2.BackColor = Color.Firebrick;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 5) + "0" + bank1[2, 6].Value.ToString().Substring(6)) port1_2.BackColor = Color.Transparent;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 5) + "1" + bank0[2, 6].Value.ToString().Substring(6)) port3_2.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 5) + "0" + bank0[2, 6].Value.ToString().Substring(6)) port3_2.BackColor = Color.Transparent;
             }
-                if (port3_1.BackColor == Color.SteelBlue)
+            if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 6) + "0" + bank1[2, 6].Value.ToString().Substring(7) && port3_1.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 6) + "1" + bank0[2, 6].Value.ToString().Substring(7);
+                port3_1.BackColor = Color.Firebrick;
+            }
+            if (port3_1.BackColor == Color.SteelBlue)
                 {
                   
                 }
                 else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "1" + bank1[2, 7].Value.ToString().Substring(7)) port1_1.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "0" + bank1[2, 7].Value.ToString().Substring(7)) port1_1.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "1" + bank0[2, 7].Value.ToString().Substring(7)) port3_1.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "0" + bank0[2, 7].Value.ToString().Substring(7)) port3_1.BackColor = Color.Transparent;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 6) + "1" + bank1[2, 6].Value.ToString().Substring(7)) port1_1.BackColor = Color.Firebrick;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 6) + "0" + bank1[2, 6].Value.ToString().Substring(7)) port1_1.BackColor = Color.Transparent;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 6) + "1" + bank0[2, 6].Value.ToString().Substring(7)) port3_1.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 6) + "0" + bank0[2, 6].Value.ToString().Substring(7)) port3_1.BackColor = Color.Transparent;
             }
-                if (port3_0.BackColor == Color.SteelBlue)
+            if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 7) + "0" && port3_0.BackColor == Color.SteelBlue)
+            {
+                bank0[2, 6].Value = bank0[2, 6].Value.ToString().Substring(0, 7) + "1" ;
+                port3_0.BackColor = Color.Firebrick;
+            }
+            if (port3_0.BackColor == Color.SteelBlue)
                 {
                   
                 }
                 else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "1") port1_0.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "0") port1_0.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "1") port3_0.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "0") port3_0.BackColor = Color.Transparent;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 7) + "1") port1_0.BackColor = Color.Firebrick;
+                if (bank1[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 7) + "0") port1_0.BackColor = Color.Transparent;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 7) + "1") port3_0.BackColor = Color.Firebrick;
+                if (bank0[2, 6].Value.ToString() == bank1[2, 6].Value.ToString().Substring(0, 7) + "0") port3_0.BackColor = Color.Transparent;
             }
                 
 
@@ -2468,188 +2719,6 @@ namespace PIC_Simulator
                 }
 
             }
-     
-        private void taktportb()
-        {
-            if (port4_7.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value =  "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port4_6.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port4_5.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port4_4.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port4_3.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port4_2.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port4_1.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port4_0.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-        }
-        private void taktporta()
-        {
-            if (port3_4.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port3_3.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port3_2.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port3_1.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-            if (port3_0.BackColor == Color.SteelBlue)
-            {
-                if (bank0[2, 7].Value.ToString().Substring(0, 1) == "0") bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                else bank0[2, 7].Value = "0" + bank0[2, 7].Value.ToString().Substring(1);
-            }
-        }
-     
-        //input aus ports in register schreiben
-        private async void inputportb()
-        {
-            while (portbeschaftigt == true) await Task.Delay(10);
-            
-            if (bank1[2, 7].Value.ToString() == "0" + bank1[2, 7].Value.ToString().Substring(1) && port4_7.BackColor == Color.SteelBlue)
-            {
-                bank0[2, 7].Value = "1" + bank0[2, 7].Value.ToString().Substring(1);
-                port4_7.BackColor = Color.Firebrick;
-            }
-          
-            if (port4_7.BackColor == Color.SteelBlue)
-            {
-                
-            }
-            else {
-              
-                if (bank1[2, 7].Value.ToString() == "1" + bank1[2, 7].Value.ToString().Substring(1)) port2_7.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == "0" + bank1[2, 7].Value.ToString().Substring(1)) port2_7.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == "1" + bank0[2, 7].Value.ToString().Substring(1)) port4_7.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == "0" + bank0[2, 7].Value.ToString().Substring(1)) port4_7.BackColor = Color.Transparent;
-
-            }
-           if (port4_6.BackColor == Color.SteelBlue)
-                {
-                   
-                }
-            else
-            {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0,1) + "1" + bank1[2, 7].Value.ToString().Substring(2)) port2_6.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1)+ "0" + bank1[2, 7].Value.ToString().Substring(2)) port2_6.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1)+ "1" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 1)+ "0" + bank0[2, 7].Value.ToString().Substring(2)) port4_6.BackColor = Color.Transparent;
-            }
-            if (port4_5.BackColor == Color.SteelBlue)
-            {
-                
-                
-            }
-            else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2)+ "1" + bank1[2, 7].Value.ToString().Substring(3)) port2_5.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2)+ "0" + bank1[2, 7].Value.ToString().Substring(3)) port2_5.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2)+ "1" + bank0[2, 7].Value.ToString().Substring(3)) port4_5.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 2)+ "0" + bank0[2, 7].Value.ToString().Substring(3)) port4_5.BackColor = Color.Transparent;
-            }
-            if (port4_4.BackColor == Color.SteelBlue)
-            {
-               
-            }
-            else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) +"1" + bank1[2, 7].Value.ToString().Substring(4)) port2_4.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) +"0" + bank1[2, 7].Value.ToString().Substring(4)) port2_4.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) +"1" + bank0[2, 7].Value.ToString().Substring(4)) port4_4.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 3) +"0" + bank0[2, 7].Value.ToString().Substring(4)) port4_4.BackColor = Color.Transparent;
-            }
-            if (port4_3.BackColor == Color.SteelBlue)
-            {
-               
-            }
-            else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "1" + bank1[2, 7].Value.ToString().Substring(5)) port2_3.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "0" + bank1[2, 7].Value.ToString().Substring(5)) port2_3.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "1" + bank0[2, 7].Value.ToString().Substring(5)) port4_3.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 4) + "0" + bank0[2, 7].Value.ToString().Substring(5)) port4_3.BackColor = Color.Transparent;
-            }
-            if (port4_2.BackColor == Color.SteelBlue)
-            {
-               
-            }
-            else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "1" + bank1[2, 7].Value.ToString().Substring(6)) port2_2.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "0" + bank1[2, 7].Value.ToString().Substring(6)) port2_2.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "1" + bank0[2, 7].Value.ToString().Substring(6)) port4_2.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 5) + "0" + bank0[2, 7].Value.ToString().Substring(6)) port4_2.BackColor = Color.Transparent;
-            }
-            if (port4_1.BackColor == Color.SteelBlue)
-            {
-               
-            }
-            else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "1" + bank1[2, 7].Value.ToString().Substring(7)) port2_1.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "0" + bank1[2, 7].Value.ToString().Substring(7)) port2_1.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "1" + bank0[2, 7].Value.ToString().Substring(7)) port4_1.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 6) + "0" + bank0[2, 7].Value.ToString().Substring(7)) port4_1.BackColor = Color.Transparent;
-            }
-            if (port4_0.BackColor == Color.SteelBlue)
-            {
-                
-            }
-            else {
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "1" ) port2_0.BackColor = Color.Firebrick;
-                if (bank1[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "0" ) port2_0.BackColor = Color.Transparent;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "1" ) port4_0.BackColor = Color.Firebrick;
-                if (bank0[2, 7].Value.ToString() == bank1[2, 7].Value.ToString().Substring(0, 7) + "0" ) port4_0.BackColor = Color.Transparent;
-            }
-            try
-            {
-                for (int j = 0; j < speicherzellen.RowCount - 1; j++)
-                {
-                    if (speicherzellen[1, j].Value.ToString() == bank0[1, 7].Value.ToString())
-                    {
-                        speicherzellen[2, j].Value = bank0[2, 7].Value.ToString();
-                    }
-                }
-            }
-            catch { }
-
-        }
-
         //inetrrupt-methode
         public void interrupt()
         {
