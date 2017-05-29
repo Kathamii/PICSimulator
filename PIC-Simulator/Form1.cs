@@ -1180,6 +1180,14 @@ namespace PIC_Simulator
                     }
 
 
+                    if (bank0[2, 4].Value.ToString().Substring(7) == "0") carry = 0;
+                    else carry = 1;
+                    if (bank0[2, 4].Value.ToString().Substring(6,1) == "0") digitcarry = 0;
+                    else digitcarry = 1;
+                    if (bank0[2, 4].Value.ToString().Substring(7) == "0") zero = 0;
+                    else zero = 1;
+                    if (opcodedata[2, opcodedata.CurrentRow.Index].Value.ToString() == "1003")
+                        carry = 0;
 
                     portbeschaftigt = false;
                     break;
@@ -1313,6 +1321,14 @@ namespace PIC_Simulator
                             }
                         }
                     }
+                    if (bank0[2, 4].Value.ToString().Substring(7) == "0") carry = 0;
+                    else carry = 1;
+                    if (bank0[2, 4].Value.ToString().Substring(6, 1) == "0") digitcarry = 0;
+                    else digitcarry = 1;
+                    if (bank0[2, 4].Value.ToString().Substring(7) == "0") zero = 0;
+                    else zero = 1;
+                    if (opcodedata[2, opcodedata.CurrentRow.Index].Value.ToString() == "1003")
+                        carry = 1;
                     portbeschaftigt = false;
                     break;
                 case 20:
