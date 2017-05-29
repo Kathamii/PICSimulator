@@ -1767,132 +1767,132 @@ namespace PIC_Simulator
                 if (bank1[2, 2].Value.ToString().Substring(4, 1) == "1")
                 {
 
-                    //switch (Prescaler_bits)
-                    //{
-                    //    case "000":
-                    //        //1:1
-                    //        textBox_Prescaler.Text = "1:1 (Watchdog)";
-                    //        if (TimerWertbefehl > 255 && TimerWertbefehl != 0)
-                    //        {
+                    switch (Prescaler_bits)
+                    {
+                        case "000":
+                            //1:1
+                            textBox_Prescaler.Text = "1:1 (Watchdog)";
+                            if (TimerWertbefehl > 255 && TimerWertbefehl != 0)
+                            {
 
-                    //            TimerWertbefehl = TimerWertbefehl - 256;
-                    //            bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                    //        }
-                    //        bank0[2, 2].Value = dec2bin(TimerWertbefehl);
+                                TimerWertbefehl = TimerWertbefehl - 256;
+                                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                            }
+                            bank0[2, 2].Value = dec2bin(TimerWertbefehl);
 
 
-                    //        break;
+                            break;
 
-                    //    case "001":
-                    //        //1:2
-                    //        textBox_Prescaler.Text = "1:2 (Watchdog)";
-                    //        if (TimerWertbefehl % 2 == 0 && TimerWertbefehl != 0)
-                    //        {
-                    //            Ausgabewert = Ausgabewert + 1;
-                    //            if (Ausgabewert > 255)
-                    //            {
-                    //                Ausgabewert = 0;
-                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                    //            }
-                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
-                    //        }
-                    //        break;
+                        case "001":
+                            //1:2
+                            textBox_Prescaler.Text = "1:2 (Watchdog)";
+                            if (TimerWertbefehl % 2 == 0 && TimerWertbefehl != 0)
+                            {
+                                Ausgabewert = Ausgabewert + 1;
+                                if (Ausgabewert > 255)
+                                {
+                                    Ausgabewert = 0;
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                }
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
+                            }
+                            break;
 
-                    //    case "010":
-                    //        //1:4
-                    //        textBox_Prescaler.Text = "1:4 (Watchdog)";
-                    //        if (TimerWertbefehl % 4 == 0 && TimerWertbefehl != 0)
-                    //        {
-                    //            Ausgabewert = Ausgabewert + 1;
-                    //            if (Ausgabewert > 255)
-                    //            {
-                    //                Ausgabewert = 0;
-                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                    //                bank1[2, 11].Value = bank0[2, 11].Value.ToString();
-                    //                for (int i = 0; i<speicherzellen.RowCount-1;i++)
-                    //                {
-                    //                    if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
-                    //                }
-                    //            }
-                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
-                    //        }
-                    //        break;
+                        case "010":
+                            //1:4
+                            textBox_Prescaler.Text = "1:4 (Watchdog)";
+                            if (TimerWertbefehl % 4 == 0 && TimerWertbefehl != 0)
+                            {
+                                Ausgabewert = Ausgabewert + 1;
+                                if (Ausgabewert > 255)
+                                {
+                                    Ausgabewert = 0;
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                    bank1[2, 11].Value = bank0[2, 11].Value.ToString();
+                                    for (int i = 0; i < speicherzellen.RowCount - 1; i++)
+                                    {
+                                        if (bank0[1, 11].Value.ToString() == speicherzellen[1, i].Value.ToString()) speicherzellen[2, i].Value = bank0[2, 11].Value.ToString();
+                                    }
+                                }
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
+                            }
+                            break;
 
-                    //    case "011":
-                    //        //1:8
-                    //        textBox_Prescaler.Text = "1:8 (Watchdog)";
-                    //        if (TimerWertbefehl % 8 == 0 && TimerWertbefehl != 0)
-                    //        {
-                    //            Ausgabewert = Ausgabewert + 1;
-                    //            if (Ausgabewert > 255)
-                    //            {
-                    //                Ausgabewert = 0;
-                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                    //            }
-                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
-                    //        }
-                    //        break;
+                        case "011":
+                            //1:8
+                            textBox_Prescaler.Text = "1:8 (Watchdog)";
+                            if (TimerWertbefehl % 8 == 0 && TimerWertbefehl != 0)
+                            {
+                                Ausgabewert = Ausgabewert + 1;
+                                if (Ausgabewert > 255)
+                                {
+                                    Ausgabewert = 0;
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                }
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
+                            }
+                            break;
 
-                    //    case "100":
-                    //        //1:16
-                    //        textBox_Prescaler.Text = "1:16 (Watchdog)";
-                    //        if (TimerWertbefehl % 16 == 0 && TimerWertbefehl != 0)
-                    //        {
-                    //            Ausgabewert = Ausgabewert + 1;
-                    //            if (Ausgabewert > 255)
-                    //            {
-                    //                Ausgabewert = 0;
-                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                    //            }
-                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
-                    //        }
-                    //        break;
+                        case "100":
+                            //1:16
+                            textBox_Prescaler.Text = "1:16 (Watchdog)";
+                            if (TimerWertbefehl % 16 == 0 && TimerWertbefehl != 0)
+                            {
+                                Ausgabewert = Ausgabewert + 1;
+                                if (Ausgabewert > 255)
+                                {
+                                    Ausgabewert = 0;
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                }
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
+                            }
+                            break;
 
-                    //    case "101":
-                    //        //1:32
-                    //        textBox_Prescaler.Text = "1:32 (Watchdog)";
-                    //        if (TimerWertbefehl % 32 == 0 && TimerWertbefehl != 0)
-                    //        {
-                    //            Ausgabewert = Ausgabewert + 1;
-                    //            if (Ausgabewert > 255)
-                    //            {
-                    //                Ausgabewert = 0;
-                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                    //            }
-                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
-                    //        }
-                    //        break;
+                        case "101":
+                            //1:32
+                            textBox_Prescaler.Text = "1:32 (Watchdog)";
+                            if (TimerWertbefehl % 32 == 0 && TimerWertbefehl != 0)
+                            {
+                                Ausgabewert = Ausgabewert + 1;
+                                if (Ausgabewert > 255)
+                                {
+                                    Ausgabewert = 0;
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                }
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
+                            }
+                            break;
 
-                    //    case "110":
-                    //        //1:64
-                    //        textBox_Prescaler.Text = "1:64 (Watchdog)";
-                    //        if (TimerWertbefehl % 64 == 0 && TimerWertbefehl != 0)
-                    //        {
-                    //            Ausgabewert = Ausgabewert + 1;
-                    //            if (Ausgabewert > 255)
-                    //            {
-                    //                Ausgabewert = 0;
-                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                    //            }
-                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
-                    //        }
-                    //        break;
+                        case "110":
+                            //1:64
+                            textBox_Prescaler.Text = "1:64 (Watchdog)";
+                            if (TimerWertbefehl % 64 == 0 && TimerWertbefehl != 0)
+                            {
+                                Ausgabewert = Ausgabewert + 1;
+                                if (Ausgabewert > 255)
+                                {
+                                    Ausgabewert = 0;
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                }
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
+                            }
+                            break;
 
-                    //    case "111":
-                    //        //1:128
-                    //        textBox_Prescaler.Text = "1:128 (Watchdog)";
-                    //        if (TimerWertbefehl % 128 == 0 && TimerWertbefehl != 0)
-                    //        {
-                    //            Ausgabewert = Ausgabewert + 1;
-                    //            if (Ausgabewert > 255)
-                    //            {
-                    //                Ausgabewert = 0;
-                    //                bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
-                    //            }
-                    //            bank0[2, 2].Value = dec2bin(Ausgabewert);
-                    //        }
-                    //        break;
-                    //}
+                        case "111":
+                            //1:128
+                            textBox_Prescaler.Text = "1:128 (Watchdog)";
+                            if (TimerWertbefehl % 128 == 0 && TimerWertbefehl != 0)
+                            {
+                                Ausgabewert = Ausgabewert + 1;
+                                if (Ausgabewert > 255)
+                                {
+                                    Ausgabewert = 0;
+                                    bank0[2, 11].Value = bank0[2, 11].Value.ToString().Substring(0, 5) + "1" + bank0[2, 11].Value.ToString().Substring(6);
+                                }
+                                bank0[2, 2].Value = dec2bin(Ausgabewert);
+                            }
+                            break;
+                    }
                 }//Wenn PSA BIT 0= Timer
                 else if (bank1[2, 2].Value.ToString().Substring(4, 1) == "0")
                 {
