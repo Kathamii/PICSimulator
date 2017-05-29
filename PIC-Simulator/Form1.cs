@@ -332,7 +332,7 @@ namespace PIC_Simulator
                         }
                     }
 
-                    string speicherzellenval= speicherzellen[2, locrow].Value.ToString();
+                    string speicherzellenval = speicherzellen[2, locrow].Value.ToString();
                     string w = bank0[2, 0].Value.ToString();
                     int addwf = bin2dec(speicherzellenval) + bin2dec(w);
                     if (addwf > 255)
@@ -1460,6 +1460,7 @@ namespace PIC_Simulator
                     //GOTO
                     befehlnr++;
                     TimerWertbefehl++;
+                  int gotorow = row;
                     binarystring = binarystring.Substring(3);
 
                     string address = BinaryStringToHexString(binarystring);
@@ -1483,9 +1484,14 @@ namespace PIC_Simulator
                         }
 
                     }
-
-                   // dataGridView1.Rows[row].DefaultCellStyle.BackColor = Color.White;
+                    if (opcodedata.CurrentRow.Index == gotorow && btn_interrupt.Enabled == false)
                     return rownr - 1;
+                    else
+                    {
+                        wait(300);
+                        if (opcodedata.CurrentRow.Index == gotorow)
+                            return rownr - 1;
+                    }
 
                     break;
                 case 27:
@@ -1527,6 +1533,8 @@ namespace PIC_Simulator
                     int sendreturnrow = returnrow + 1;
                     returnrow = 1234567;
                     txt_stack.Text = "";
+                    btn_interrupt.BackColor = Color.Transparent;
+                    btn_interrupt.Enabled = false;
                     return sendreturnrow;
 
                     break;
@@ -1772,6 +1780,11 @@ namespace PIC_Simulator
             portbeschaftigt = false;
 
             return 1234567;
+        }
+
+        private async void wait(int v)
+        {
+            await Task.Delay(v);
         }
 
         //timer, der bei befehlsdurchlauf läuft
@@ -2751,8 +2764,7 @@ namespace PIC_Simulator
                 if (opcodedata[1, i].Value.ToString() == "0004")
                     opcodedata.CurrentCell = opcodedata[1, i-1];
             }
-            btn_interrupt.BackColor = Color.Transparent;
-            btn_interrupt.Enabled = false;
+            
             interupt = false;
         }
         
@@ -2911,7 +2923,12 @@ namespace PIC_Simulator
         //ausführen eines befehls nach klick des step buttons
         private async void stepbtn_Click_1(object sender, EventArgs e)
         {
+
             while (interupt == true) await Task.Delay(1000);
+            startbtn.Visible = false;
+            startbtn.Enabled = false;
+            btn_weiter.Visible = true;
+            btn_weiter.Enabled = true;
             timer_freq.Interval = 200;
             timer_freq.Start();
 
